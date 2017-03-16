@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netease.myShoppingMall.core.dao.CartMapper">
+
+	<sql id="pagePagination">
+    	limit #{start,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
+  	</sql>
+  	
+  	<sql id="Base_Column_List">
+	  	a.userId, a.goodsId, a.purchasedAmount
+	</sql>
+  	
+	<select id="count" parameterType="Map" resultType="java.lang.Integer">
+		select
+		<if test="status !=null and status !='' and status == 'identical'">
+			ifnull(count(goodsId),0) as total 
+		</if>
+		<if test="status == null or status ==''">
+			ifnull(sum(purchasedAmount),0) total
+		</if> 
+		from netease_shopcart where userId = #{userId,jdbcType=INTEGER}
+		<if test="goodsId !=null and goodsId != ''">
+			and goodsId = #{goodsId, jdbcType=VARCHAR}
+		</if>
+		
+	</select>
+	
+	<select id="findOne" parameterType="Map" resultType="Map">
+		select 
+		<include refid="Base_Column_List" />
+		from netease_shopcart a 
+		where a.userId = #{userId,jdbcType=INTEGER} and a.goodsId = #{goodsId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findByPage" parameterType="Map" resultType="Map">
+		select 
+		<include refid="Base_Column_List" />
+		,a.purchasedAmount*b.unitPrice as priceSum, b.goodsName, b.imgSrc from netease_shopcart a
+		left join netease_goodsInfo b on a.goodsId = b.goodsId
+		where a.userId = #{userId,jdbcType=INTEGER} 
+		
+		<include refid="pagePagination" />	
+	</select>
+	
+	<insert id="insert" parameterType="Map">
+		insert into netease_shopcart(userId, goodsId, purchasedAmount)
+		select 
+		#{userId,jdbcType=INTEGER}, 
+		#{goodsId,jdbcType=INTEGER}, 
+		#{purchasedAmount,jdbcType=INTEGER}
+		from netease_goodsInfo where goodsId = #{goodsId,jdbcType=INTEGER}
+	</insert>
+	
+	<update id="update" parameterType="Map">
+	    update netease_shopcart
+	    set purchasedAmount = (purchasedAmount + #{purchasedAmount,jdbcType=INTEGER})
+	    where userId = #{userId,jdbcType=INTEGER} and goodsId = #{goodsId,jdbcType=INTEGER}
+    </update>
+	
+	<delete id="deleteOne" parameterType="Map">
+		delete from netease_shopcart 
+		where userId = #{userId,jdbcType=INTEGER} and goodsId = #{goodsId,jdbcType=INTEGER}
+	</delete>
+	
+	<delete id="deletes" parameterType="Map">
+		delete from netease_shopcart
+		where userId = #{userId,jdbcType=INTEGER}
+		<if test="status != 'all'">
+			<if test="goodsIds != null">
+				and goodsId in
+				<foreach collection="goodsIds" item="item" open="(" separator="," close=")">
+					#{item,jdbcType=INTEGER}
+				</foreach>
+			</if>
+		</if>
+	</delete>
+	
+</mapper>

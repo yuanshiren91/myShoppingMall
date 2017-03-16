@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netease.myShoppingMall.core.dao.GoodsMapper">
+	<resultMap id="Goods" type="com.netease.myShoppingMall.core.domain.Goods">
+        <result column="goodsId" property="goodsId" jdbcType="INTEGER" />      
+        <result column="goodsName" property="goodsName" jdbcType="VARCHAR" />      
+        <result column="unitPrice" property="unitPrice" jdbcType="DOUBLE" />      
+        <result column="sellerId" property="sellerId" jdbcType="INTEGER" />      
+        <result column="abstractInfo" property="abstractInfo" jdbcType="VARCHAR" />      
+        <result column="description" property="description" jdbcType="VARCHAR" />      
+        <result column="imgSrc" property="imgSrc" jdbcType="VARCHAR" />      
+        <result column="amount" property="amount" jdbcType="INTEGER" />    
+        <result column="selledAmount" property="selledAmount" jdbcType="INTEGER"/>  
+        <result column="isValid" property="isValid" jdbcType="VARCHAR"/>
+    </resultMap> 
+    
+    <sql id="Base_Column_List">
+    	a.goodsId, a.goodsName, a.unitPrice, a.sellerId, ifnull(a.abstractInfo," ") abstractInfo, 
+    	ifnull(a.description," ") description, a.imgSrc, a.amount, a.isValid
+    </sql>
+    
+    <sql id="pagePagination">
+    	limit #{start,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
+  	</sql>
+  	
+  	<sql id="fuzzy_query">
+  		<if test="keywords !=null and keywords !=''">
+			and a.goodsName like CONCAT('%', #{keywords,jdbcType=VARCHAR}, '%')
+		</if>
+  	</sql>
+  	<sql id="precise_query">
+  		<if test="goodsId != null">
+  			and a.goodsId = #{goodsId,jdbcType=INTEGER}
+  		</if>
+  		<if test="goodsName != null">
+	      	and a.goodsName = #{goodsName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="amount != null">
+	     	and a.amount = #{amount,jdbcType=INTEGER}
+	    </if>
+	    <if test="unitPrice != null">
+	      	and a.unitPrice = #{unitPrice,jdbcType=DOUBLE}
+	    </if>
+	    <if test="sellerId != null">
+	      	and a.sellerId = #{sellerId,jdbcType=INTEGER}
+	    </if>
+	    <if test="abstractInfo != null">
+	      	and a.abstractInfo = #{abstractInfo,jdbcType=VARCHAR}
+	    </if>
+	    <if test="description != null">
+	      	and a.description = #{description,jdbcType=VARCHAR}
+	    </if>
+	    <if test="imgSrc != null">
+	      	and a.imgSrc = #{imgSrc,jdbcType=VARCHAR}
+	    </if>
+	    <if test="isValid != null">
+	    	and a.isValid = #{isValid,jdbcType=VARCHAR}
+	    </if>
+  	</sql>
+    
+	<select id="count" parameterType="Map" resultType="java.lang.Integer">
+		select count(1) from netease_goodsInfo a
+		where 1=1
+		<if test="roleId != null and roleId !='' and roleId == 2 and userId != null and userId !=''">
+			and a.sellerId = #{userId, jdbcType=INTEGER}
+		</if>
+		<if test="status == 'all'">
+			
+		</if>
+		<if test="status == 'purchased' and userId !=null and userId !=''">
+			and a.goodsId in(select goodsId from netease_orderInfo where userId = #{userId, jdbcType=INTEGER} and isCompleted='1' )
+		</if>
+		<if test="status == 'unPurchased' and userId !=null and userId !=''">
+			and a.goodsId not in(select goodsId from netease_orderInfo where userId = #{userId, jdbcType=INTEGER} and isCompleted='1' )
+		</if>
+		<if test="status == 'selled' ">
+			and a.goodsId in(select goodsId from netease_orderInfo where isCompleted = '1')
+		</if>
+		<if test="status == 'unSelled' ">
+			and a.goodsId not in(select goodsId from netease_orderInfo where isCompleted = '1')
+		</if>
+		
+		<include refid="fuzzy_query"/>
+		<include refid="precise_query"/>
+	</select>
+	
+	<select id="findByPage" parameterType="Map" resultMap="Goods">
+		select 
+		<include refid="Base_Column_List" />
+		,ifnull(b.purchasedAmount, 0) as selledAmount from netease_goodsinfo a
+		left join netease_orderInfo b on a.goodsId = b.goodsId and b.isCompleted = '1' 		
+		<!-- 买家 -->
+		<if test="roleId !=null and roleId !='' and roleId == 1 and userId != null and userId !=''">
+			and b.userId = #{userId,jdbcType=INTEGER}
+		</if>
+		where 1=1		
+		<!-- 卖家 -->
+		<if test="roleId != null and roleId !='' and roleId == 2 and userId != null and userId !=''">
+			and a.sellerId = #{userId, jdbcType=INTEGER}
+		</if>				
+		<if test="status == 'all'">
+			
+		</if>
+		<if test="status == 'purchased' and userId !=null and userId !=''">
+			and a.goodsId in(select goodsId from netease_orderInfo where userId = #{userId, jdbcType=INTEGER} and isCompleted='1' )
+		</if>
+		<if test="status == 'unPurchased' and userId !=null and userId !=''">
+			and a.goodsId not in(select goodsId from netease_orderInfo where userId = #{userId, jdbcType=INTEGER} and isCompleted='1' )
+		</if>
+		<if test="status == 'selled' ">
+			and a.goodsId in(select goodsId from netease_orderInfo where isCompleted = '1')
+		</if>
+		<if test="status == 'unSelled' ">
+			and a.goodsId not in(select goodsId from netease_orderInfo where isCompleted = '1')
+		</if>		
+		<include refid="fuzzy_query"/>
+		
+		<if test="ifOrder !=null and ifOrder == true">
+			order by selledAmount desc	
+		</if>	
+		<include refid="pagePagination" />	
+	</select>
+	
+	<select id="findOne" parameterType="Map" resultMap="Goods">
+		select
+		<include refid="Base_Column_List" />
+		from netease_goodsInfo a 
+		where a.goodsId = #{goodsId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findList" parameterType="Map" resultMap="Goods">
+		select
+		<include refid="Base_Column_List" />
+		from netease_goodsInfo a 
+		where 1=1 
+		<include refid="precise_query" />
+	</select>
+	
+	<insert id="insert" parameterType="com.netease.myShoppingMall.core.domain.Goods" 
+		useGeneratedKeys="true" keyProperty="goodsId">
+		insert into netease_goodsInfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	  		<if test="goodsName != null">
+		      	goodsName,
+		    </if>
+		    <if test="amount != null">
+		     	amount,
+		    </if>
+		    <if test="unitPrice != null">
+		      	unitPrice,
+		    </if>
+		    <if test="sellerId != null">
+		      	sellerId,
+		    </if>
+		    <if test="abstractInfo != null">
+		      abstractInfo,
+		    </if>
+		    <if test="description != null">
+		      	description,
+		    </if>
+		    <if test="imgSrc != null">
+		      	imgSrc,
+		    </if>
+		    <if test="isValid != null">
+		    	isValid,
+		    </if>
+		</trim>
+		values 		
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	  		<if test="goodsName != null">
+		      	#{goodsName,jdbcType=VARCHAR},
+		    </if>
+		    <if test="amount != null">
+		     	#{amount,jdbcType=INTEGER}, 
+		    </if>
+		    <if test="unitPrice != null">
+		    	#{unitPrice,jdbcType=DOUBLE},
+		    </if>
+		    <if test="sellerId != null">
+		      	#{sellerId,jdbcType=VARCHAR}, 
+		    </if>
+		    <if test="abstractInfo != null">
+		      	#{abstractInfo,jdbcType=VARCHAR},
+		    </if>
+		    <if test="description != null">
+		      	description,
+		    </if>
+		    <if test="imgSrc != null">
+		      	#{imgSrc,jdbcType=VARCHAR}
+		    </if>
+		    <if test="isValid != null">
+		    	#{isValid,jdbcType=VARCHAR}
+		    </if>
+		</trim>
+	</insert>
+	
+	<update id="update" parameterType="com.netease.myShoppingMall.core.domain.Goods">
+		update netease_goodsInfo
+	  <set>
+	    <if test="goodsName != null">
+	      goodsName = #{goodsName,jdbcType=VARCHAR},
+	    </if>
+	    <if test="amount != null">
+	      amount = #{amount,jdbcType=INTEGER},
+	    </if>
+	    <if test="unitPrice != null">
+	      unitPrice = #{unitPrice,jdbcType=DOUBLE},
+	    </if>
+	    <if test="sellerId != null">
+	      sellerId = #{sellerId,jdbcType=INTEGER},
+	    </if>
+	    <if test="abstractInfo != null">
+	    	abstractInfo = #{abstractInfo,jdbcType=VARCHAR},
+	    </if>
+	    <if test="description != null">
+	      description = #{description,jdbcType=VARCHAR},
+	    </if>
+	    <if test="imgSrc != null">
+	    	imgSrc = #{imgSrc,jdbcType=VARCHAR},
+	    </if>
+	    <if test="isValid != null">
+	    	isValid = #{isValid,jdbcType=VARCHAR},
+	    </if>
+	  </set>
+	  where goodsId = #{goodsId,jdbcType=INTEGER}
+	  	and sellerId = #{sellerId,jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteOne" parameterType="com.netease.myShoppingMall.core.domain.Goods">
+		delete from netease_goodsInfo where goodsId = #{goodsId,jdbcType=INTEGER}
+			and sellerId = #{sellerId,jdbcType=INTEGER}
+	</delete>
+</mapper>

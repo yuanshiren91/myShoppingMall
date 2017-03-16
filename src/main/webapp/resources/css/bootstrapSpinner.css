@@ -1,0 +1,11 @@
+.spinner {
+	box-sizing: border-box;
+	width:33%
+}
+.quantity-remove, .quantity-add {  
+    cursor: pointer;  
+}  
+.quantity-add.glyphicon, .quantity-remove.glyphicon {  
+    display: inline-block;  
+    cursor: pointer;  
+}  

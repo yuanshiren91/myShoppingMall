@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.netease.myShoppingMall.core.dao.OrderMapper">
+	<resultMap id="Order" type="com.netease.myShoppingMall.core.domain.Order">
+	  <id column="userId" jdbcType="INTEGER" property="userId" />
+	  <id column="goodsId" jdbcType="INTEGER" property="goodsId" />
+	  <result column="orderTime" jdbcType="DATE" property="orderTime" />
+	  <result column="purchasedAmount" jdbcType="INTEGER" property="purchasedAmount" />
+	  <result column="priceSum" jdbcType="DOUBLE" property="priceSum" />
+	  <result column="isCompleted" jdbcType="VARCHAR" property="isCompleted" />
+	</resultMap>
+	
+	<sql id="pagePagination">
+	  	limit #{start,jdbcType=INTEGER}, #{limit,jdbcType=INTEGER}
+	</sql>
+	
+	<sql id="Base_Column_List">
+	  	a.userId, a.goodsId, a.orderTime, a.purchasedAmount, a.priceSum, a.isCompleted
+	</sql>
+	
+	<sql id="precise_query">
+		<if test="userId != null">
+	      and a.userId = #{userId,jdbcType=INTEGER}
+	    </if>
+	    <if test="goodsId != null">
+	      and a.goodsId = #{goodsId,jdbcType=INTEGER}
+	    </if>
+	    <if test="orderTime != null">
+	      and a.orderTime = #{orderTime,jdbcType=DATE}
+	    </if>
+	    <if test="purchasedAmount != null">
+	      and a.purchasedAmount = #{purchasedAmount,jdbcType=INTEGER}
+	    </if>
+	    <if test="priceSum != null">
+	      and a.priceSum = #{priceSum,jdbcType=DOUBLE}
+	    </if>
+	    <if test="isCompleted != null">
+	      and a.isCompleted = #{isCompleted,jdbcType=VARCHAR}
+	    </if>		
+	</sql>
+	
+	<select id="count" parameterType="Map" resultType="java.lang.Integer">
+		select count(1) from netease_orderInfo a where 1=1 
+		<include refid="precise_query"></include>
+	</select>
+	
+	<select id="selectByPrimaryKey" parameterType="com.netease.myShoppingMall.core.domain.OrderKey" resultMap="Order">
+	  select 
+	  <include refid="Base_Column_List" />
+	  from netease_orderinfo a
+	  where a.userId = #{userId,jdbcType=INTEGER}
+	    and a.goodsId = #{goodsId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getOrderSum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select ifnull(sum(priceSum),0) total from netease_orderInfo
+		where userId = #{userId,jdbcType=INTEGER}
+		and isCompleted = "1"
+	</select>
+	
+	<select id="findOne" parameterType="Map" resultType="Map">
+		select 
+		<include refid="Base_Column_List"></include>
+		from netease_orderInfo a 
+		where 1=1 
+		<include refid="precise_query"></include>
+	</select>
+	
+	<select id="findByPage" parameterType="Map" resultType="Map">
+		select
+		<include refid="Base_Column_List" />
+		,b.goodsName, b.imgSrc
+		from netease_orderInfo a
+		left join netease_goodsinfo b on a.goodsId = b.goodsId
+		where a.userId = #{userId,jdbcType=INTEGER} 
+	
+		<include refid="pagePagination" />
+	</select>  
+	
+	<delete id="deleteByPrimaryKey" parameterType="com.netease.myShoppingMall.core.domain.OrderKey">
+	  	delete from netease_orderInfo
+	  	where userId = #{userId,jdbcType=INTEGER}
+	    and goodsId = #{goodsId,jdbcType=INTEGER}
+	</delete>
+	
+	<insert id="insert" parameterType="com.netease.myShoppingMall.core.domain.Order">
+	  insert into netease_orderInfo (userId, goodsId, orderTime, 
+	    purchasedAmount, priceSum, isCompleted
+	    )
+	  values (#{userId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{orderTime,jdbcType=DATE}, 
+	    #{purchasedAmount,jdbcType=INTEGER}, #{priceSum,jdbcType=DOUBLE}, #{isCompleted,jdbcType=VARCHAR}
+	    )
+	</insert>
+	
+	<insert id="insertSelective" parameterType="com.netease.myShoppingMall.core.domain.Order">
+	  insert into netease_orderinfo
+	  <trim prefix="(" suffix=")" suffixOverrides=",">
+	    <if test="userId != null">
+	      userId,
+	    </if>
+	    <if test="goodsId != null">
+	      goodsId,
+	    </if>
+	    <if test="orderTime != null">
+	      orderTime,
+	    </if>
+	    <if test="purchasedAmount != null">
+	      purchasedAmount,
+	    </if>
+	    <if test="priceSum != null">
+	      priceSum,
+	    </if>
+	    <if test="isCompleted != null">
+	      isCompleted,
+	    </if>
+	  </trim>
+	  <trim prefix="values (" suffix=")" suffixOverrides=",">
+	    <if test="userId != null">
+	      #{userId,jdbcType=INTEGER},
+	    </if>
+	    <if test="goodsId != null">
+	      #{goodsId,jdbcType=INTEGER},
+	    </if>
+	    <if test="orderTime != null">
+	      #{orderTime,jdbcType=DATE},
+	    </if>
+	    <if test="purchasedAmount != null">
+	      #{purchasedAmount,jdbcType=INTEGER},
+	    </if>
+	    <if test="priceSum != null">
+	      #{priceSum,jdbcType=DOUBLE},
+	    </if>
+	    <if test="isCompleted != null">
+	      #{isCompleted,jdbcType=VARCHAR},
+	    </if>
+	  </trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.netease.myShoppingMall.core.domain.Order">
+	  update netease_orderinfo
+	  <set>
+	    <if test="orderTime != null">
+	      orderTime = #{orderTime,jdbcType=DATE},
+	    </if>
+	    <if test="purchasedAmount != null">
+	      purchasedAmount = #{purchasedAmount,jdbcType=INTEGER},
+	    </if>
+	    <if test="priceSum != null">
+	      priceSum = #{priceSum,jdbcType=DOUBLE},
+	    </if>
+	    <if test="isCompleted != null">
+	      isCompleted = #{isCompleted,jdbcType=VARCHAR},
+	    </if>
+	  </set>
+	  where userId = #{userId,jdbcType=INTEGER}
+	    and goodsId = #{goodsId,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateByPrimaryKey" parameterType="com.netease.myShoppingMall.core.domain.Order">
+	  update netease_orderinfo
+	  set orderTime = #{orderTime,jdbcType=DATE},
+	    purchasedAmount = #{purchasedAmount,jdbcType=INTEGER},
+	    priceSum = #{priceSum,jdbcType=DOUBLE},
+	    isCompleted = #{isCompleted,jdbcType=VARCHAR}
+	  	where userId = #{userId,jdbcType=INTEGER}
+	    and goodsId = #{goodsId,jdbcType=INTEGER}
+	</update>	
+	
+	<insert id="checkout" parameterType="Map">
+		insert into netease_orderInfo(userId, goodsId, orderTime, purchasedAmount, priceSum, isCompleted) 
+		select a.userId, a.goodsId, NOW(), a.purchasedAmount, a.purchasedAmount*b.unitPrice, "1" from netease_shopcart a
+		left join netease_goodsInfo b on a.goodsId = b.goodsId
+		where a.userId = #{userId,jdbcType=INTEGER}
+		<if test="status != 'all'">
+			where a.goodsId in
+				<foreach collection="goodsIds" item="item" open="(" separator="," close=")">
+					  #{item,jdbcType=INTEGER}
+				</foreach>
+		</if>
+	</insert>
+	
+</mapper>
