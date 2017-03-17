@@ -105,7 +105,7 @@
                 	for(var i = 0; i < resultList.length ; i ++) {
                 		list += '<ul class="order-header">'
                 			 + '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a href="javascript:showItem(\'' + resultList[i].goodsId + '\');" ><img src="${imagesPath}/p-8.png" class="" alt=""></a></li>'
+							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
 							 +	'<li><span class="time">' + resultList[i].orderTime + '</span></li>'
 							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
@@ -118,9 +118,6 @@
 			});		
 		}
 
-		function showItem(goodsId) {
-			windows.location.href="${contextPath}/goods/showGoodsInfo?goodsId=" + goodsId;
-		}
 		
 	</script>
 </body>

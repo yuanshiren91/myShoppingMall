@@ -34,14 +34,14 @@
 					<div class="col-md-5 single-top-left">	
 						<div class="flexslider">
 							  <ul class="slides">
-								<li data-thumb="${imagesPath}/s-1.jpg">
-									<div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive" alt=""/> </div>
+								<li data-thumb="">
+									<div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive"  alt=""/> </div>
 								</li>
-								<li data-thumb="${imagesPath}/s-2.jpg">
-									 <div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive" alt=""/> </div>
+								<li data-thumb="">
+									 <div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive"  alt=""/> </div>
 								</li>
-								<li data-thumb="${imagesPath}/s-3.jpg">
-								   <div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive" alt=""/> </div>
+								<li data-thumb="">
+								   <div class="thumb-image"> <img src="" data-imagezoom="true" class="img-responsive"  alt=""/> </div>
 								</li> 
 							  </ul>
 						</div>
@@ -112,6 +112,7 @@
 	 				</ul>
 				</div>
 				<div class="latestproducts">
+					<h4><span>最受欢迎的商品</span></h4>
 					<div class="product-one">
 
 					</div>
@@ -127,10 +128,10 @@
 	<script type="text/javascript" src="${scriptsPath}/jquery.flexslider.js"></script>	
 	<script type="text/javascript" src="${scriptsPath}/bootstrapSpinner.js"></script>	
 	<script type="text/javascript">
-		$(function() {
+		$(function() {			
 			//加载商品信息
 			loadGoodsInfo();
-			
+						
 		    var menu_ul = $('.menu_drop > li > ul'),
 		           menu_a  = $('.menu_drop > li > a');
 		    
@@ -147,23 +148,17 @@
 		            $(this).next().stop(true,true).slideUp('normal');
 		        }
 		    });
-		    
-		    <c:if test="${empty isPurchased or isPurchased eq false }">				
+		    <c:if test="${empty isPurchased or isPurchased eq false }">	
 				$('#btnAddToCart').click(function(){
 					addToCart();
 				});	
 			</c:if>
 			<c:if test="${not empty isPurchased and isPurchased eq true }">
 				$('#btnAddToCart').addClass("add-cart-disable");
+				$('.quantity-add').unbind("click");
+				$('.quantity-remove').unbind("click");	
 			</c:if>
 		
-			//初始化图片轮播插件
-			$('.flexslider').flexslider({
-				animation: "slide",
-				controlNav: "thumbnails",
-				directionNav: false
-		  	});
-			
 			$('#purchasedAmount').change(function() {
 				var purchasedAmount = parseInt($(this).val());
 				var amount = parseInt($("#amount").html());
@@ -174,9 +169,19 @@
 				}
 			});
 			
+			//加载轮播图片
+			loadFlexslider();
+			//初始化轮播图片插件
+			$('.flexslider').flexslider({
+				animation: "slide",
+				controlNav: "thumbnails",
+				directionNav: false
+		  	});
+			
+			//加载最受欢迎的商品
 			var mostPopularItems = 3;
 			loadMostPopular(mostPopularItems);
-		
+
 		});
 		
 		function loadGoodsInfo() {
@@ -190,33 +195,24 @@
 					alert('运行超时，请重试！');
 				},
 				onLoadComplete : function () {
-					if($('#amount').val() == 0) {
+					if(parseInt($('#amount').html()) == 0) {
 						$("#btnAddToCart").addClass("add-cart-disable");
 					}	
 				}
 			});
 		}
 		
-		$('.slides').find('li').each(function () {
-			$(this).attr("data-thumb","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single");
-			$(this).find("img").attr("src","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single");
-		});
-		
-		function loadGoodsImage(status) {
-			var goodsId = $('#goodsId').val();
-			$.ajax({
-				type: "get",
-				dataType: "json",
-				url:"${contextPath}/goods/getGoodsImgSrc/" + goodsId + "/" +status,
-				contentType:"application/json; charset=utf-8",
-				error: function (data) { 
-					
-				},
-				success: function(data, textStatus) {
-					
-				}
+		//加载轮播图片
+		function loadFlexslider() {
+			$('.slides').find('li').each(function (index) {
+				$(this).attr("data-thumb","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + index);			
+				$(this).find("img").attr("src","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + index);
+				$(this).find("img").error(function(){
+					$(this).src='${imagesPath}/noPic.jpg';
+				});
 			});
 		}
+		
 		function addToCart() {
 			var confirmMsg = "加入购物车";
 			Messager.confirm({ message: "确认" + confirmMsg }).on(function (e) {
@@ -270,9 +266,9 @@
 						     +  '<div class="product-main simpleCart_shelfItem">'
 							 +  '<a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" class="mask">';
 							 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
-								 list += "<img class='img-responsive zoom-img' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
+								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
 							 } else {
-								 list += "<img class='img-responsive zoom-img' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single'/>";   
+								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single/0'/>";   
 							 }	
 						list += "</div>"
 							 +  '<div class="product-bottom">'
@@ -288,8 +284,7 @@
                 }
 			});	
 		}
-		
-		
+
 	</script>	
 </body>
 </html>

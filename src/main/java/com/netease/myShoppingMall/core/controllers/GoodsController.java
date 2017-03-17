@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -142,8 +143,9 @@ public class GoodsController extends CommonController{
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/showGoodsImage/{goodsId}/{status}")
-	public String showGoodsImage(@PathVariable("goodsId") Integer goodsId, @PathVariable("status") String status, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping("/showGoodsImage/{goodsId}/{status}/{index}")
+	public List<String> showGoodsImage(@PathVariable("goodsId") Integer goodsId, @PathVariable("status") String status, @PathVariable("index") Integer index,
+			HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("goodsId", goodsId);
 		List<String> imgSrcList = goodsService.getGoodsImgSrc(params);
@@ -154,21 +156,23 @@ public class GoodsController extends CommonController{
 			if("single".equals(status)) {
 				String imgSrc = "";
 				if(!imgSrcList.isEmpty()) {
-					imgSrc = imgSrcList.get(0);
-				}
-				File img = FileUploadUtil.getFile(imgSrc);
-				if(!img.isDirectory()){
-					fis = new FileInputStream(img);
-					os = response.getOutputStream();
-					int count = 0;
-					byte[] buffer = new byte[1024*8];
-					while((count = fis.read(buffer)) != -1) {
-						os.write(buffer, 0, count);
-						os.flush();
+					int maxIndex = imgSrcList.size() - 1;
+					imgSrc = imgSrcList.get(Math.min(index, maxIndex));
+					File img = FileUploadUtil.getFile(imgSrc);
+					if(!img.isDirectory()){
+						fis = new FileInputStream(img);
+						os = response.getOutputStream();
+						int count = 0;
+						byte[] buffer = new byte[1024*8];
+						while((count = fis.read(buffer)) != -1) {
+							os.write(buffer, 0, count);
+							os.flush();
+						}
 					}
 				}
-			} else {
 				
+			} else if("all".equals(status)){
+				return imgSrcList;
 			}
 			
 		} catch(Exception e) {
@@ -185,7 +189,7 @@ public class GoodsController extends CommonController{
 				e.printStackTrace();
 			}
 		}
-		return "ok";
+		return new ArrayList<String>();
 	}
 	
 }

@@ -10,4 +10,6 @@ import com.netease.myShoppingMall.core.domain.Goods;
 
 @Repository
 public interface GoodsMapper extends BaseMapper<Goods>{
+	//用户购买商品后更新商品数量
+	public int updateAfterPurchased(Map<String, Object> params);
 }

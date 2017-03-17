@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>  
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}" scope="session"/>  
-<c:set var="imagesPath" value="${contextPath}/resources/images"  scope="session"/>  
+<c:set var="imagesPath" value="${contextPath}/resources/img"  scope="session"/>  
 <c:set var="stylesPath" value="${contextPath}/resources/css"  scope="session"/>  
 <c:set var="scriptsPath" value="${contextPath}/resources/js"  scope="session"/>  
 <c:set var="fontsPath" value="${contextPath}/resources/fonts" scope="session"/>

@@ -86,7 +86,7 @@
                			 	 +  '<div class="delete"> </div>'
                			 	 +  '<div class="edit"> </div>'
                			 	 +  '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a style="width:50px" href="javascript:showItem(\'' + resultList[i].goodsId + '\');" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single" class="" alt=""></a></li>'
+							 +  '<li class="ring-in"><a style="width:50px" href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
 							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
 							 +	'<li><span class="cost">' + resultList[i].priceSum + '</span></li>'
@@ -138,9 +138,6 @@
 			
 		}
 		
-		function showItem(goodsId) {
-			windows.location.href="${contextPath}/goods/showGoodsInfo?goodsId=" + goodsId;
-		}
 		
 		function checkout(status) {
 			var params = {};

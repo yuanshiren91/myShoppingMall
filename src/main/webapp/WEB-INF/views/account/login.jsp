@@ -29,7 +29,7 @@
 		<div class="container">
 			<div class="breadcrumbs-main">
 				<ol class="breadcrumb">
-					<li><a href="${pageContent.request.contextPath}/index">主页</a></li>
+					<li><a href="${contextPath}/index">主页</a></li>
 					<li class="active">账户登录</li>
 				</ol>
 			</div>

@@ -1,6 +1,6 @@
 .spinner {
 	box-sizing: border-box;
-	width:33%
+	width:40%;
 }
 .quantity-remove, .quantity-add {  
     cursor: pointer;  

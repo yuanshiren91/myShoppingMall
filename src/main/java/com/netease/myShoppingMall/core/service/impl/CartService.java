@@ -38,7 +38,10 @@ public class CartService extends BaseService<Map<String, Object>> implements ICa
 	@Transactional
 	public int checkout(Map<String, Object> params) {
 		orderMapper.checkout(params);
-		return cartMapper.deletes(params);
+		goodsMapper.updateAfterPurchased(params);
+		throw new RuntimeException("test");
+		//return cartMapper.deletes(params);		
+	    
 	}
 
 	@Override

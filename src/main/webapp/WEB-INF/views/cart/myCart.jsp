@@ -89,7 +89,7 @@
                 		list += '<ul class="cart-header">'
                 			 +  '<div class="delete"> </div>'
                 			 +  '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=\'' + resultList[i].goodsId + '\'" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single" class="" alt=""></a></li>'
+							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
  							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
  							 +	'<li><span class="cost">' + resultList[i].priceSum + '</span></li>'
@@ -148,6 +148,7 @@
 				});
 				params.status = status;
 				params.goodsIds = goodsIds;
+				
 				$.ajax({
 					type: "POST",
 					dataType: "json",

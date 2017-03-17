@@ -61,7 +61,7 @@ body a{
 	position: relative;
 }
 .search-bar input[type="submit"] {
-    background: url(../images/search.png)no-repeat 0px 0px;
+    background: url(../img/search.png)no-repeat 0px 0px;
     outline: none;
     -webkit-appearance: none;
     border: 0;
@@ -391,7 +391,7 @@ span.simpleCart_total {
 /*--banner-Part-starts-Here --*/
 /*--banner-starts--*/
 .banner{
-	background:url(../images/bnr-1.jpg) no-repeat;
+	background:url(../img/bnr-1.jpg) no-repeat;
 	min-height:600px;
 	background-size:cover;
 	-webkit-background-size:cover;
@@ -400,7 +400,7 @@ span.simpleCart_total {
 	-ms-background-size:cover;
 }
 .banner1{
-	background:url(../images/bnr-2.jpg) no-repeat;
+	background:url(../img/bnr-2.jpg) no-repeat;
 	min-height:600px;
 	background-size:cover;
 	-webkit-background-size:cover;
@@ -409,7 +409,7 @@ span.simpleCart_total {
 	-ms-background-size:cover;
 }
 .banner2{
-	background:url(../images/bnr-3.jpg) no-repeat;
+	background:url(../img/bnr-3.jpg) no-repeat;
 	min-height:600px;
 	background-size:cover;
 	-webkit-background-size:cover;
@@ -449,7 +449,7 @@ span.simpleCart_total {
   	text-decoration: none;
   	height: 30px;
   	width: 30px;
-  	background: transparent url("../images/arrow.png") no-repeat left top;
+  	background: transparent url("../img/arrow.png") no-repeat left top;
 	display: none;
 }
 .callbacks_nav:active {
@@ -684,7 +684,7 @@ figure.effect-bubba:hover p,figure.effect-bubba:hover h2 {
     font-family: 'BreeSerif-Regular';
 }
 .product-bottom h4 i {
-    background: url(../images/cart-2.png) no-repeat;
+    background: url(../img/cart-2.png) no-repeat;
     width: 20px;
     height: 15px;
     display: inline-block;
@@ -692,7 +692,7 @@ figure.effect-bubba:hover p,figure.effect-bubba:hover h2 {
     vertical-align: middle;
 }
 .product-left:hover .product-bottom h4 i{
-	background: url(../images/cart-3.png) no-repeat;
+	background: url(../img/cart-3.png) no-repeat;
 }
 .product-bottom {
     text-align: center;
@@ -783,7 +783,7 @@ a.mask {
     font-family: 'BreeSerif-Regular';
 }
 .infor-left ul li a span {
-    background: url(../images/s-icons.png) no-repeat;
+    background: url(../img/s-icons.png) no-repeat;
     width: 34px;
     height: 34px;
     display: inline-block;
@@ -1149,7 +1149,7 @@ a.mask {
 	left: 2px;
 	width: 10px;
 	height: 7px;
-	background: url(../images/tick.png) no-repeat;
+	background: url(../img/tick.png) no-repeat;
 	text-align: center;
 }
 .sky-form .radio input:checked + i:after,
@@ -1530,7 +1530,7 @@ a.mask {
 	padding:6em 0px;
 }
 .edit {
-	background: url('../images/edit.png') no-repeat 0px 0px;
+	background: url('../img/edit.png') no-repeat 0px 0px;
 	cursor: pointer;
 	width: 34px;
 	height: 34px;
@@ -1543,7 +1543,7 @@ a.mask {
 	transition: color 0.2s ease-in-out;
 }
 .delete {
-	background: url('../images/close.png') no-repeat 0px 0px;
+	background: url('../img/close.png') no-repeat 0px 0px;
 	cursor: pointer;
 	width: 28px;
 	height: 28px;
@@ -1756,7 +1756,7 @@ ul.star-footer li {
 ul.star-footer li i {
     height: 16px;
     width: 16px;
-    background: url("../images/star.png") no-repeat;
+    background: url("../img/star.png") no-repeat;
     display: inline-block;
 }
 .review {
@@ -2028,22 +2028,29 @@ h3.ghj {
 }
 /*--end-register--*/
 /*--media-quaries-starts-here--*/
-@media (max-width:1440px){
+@media (max-width:1920px){
 .banner,.banner1,.banner2{
-	min-height:570px;
+	min-height:630px;
 }	
 .mask img {
     width: 50%;
     height: 100%;
+    image-position: buttom;
 }
+}
+@media (max-width:1680px){
+.banner,.banner1,.banner2{
+	min-height:600px;
+}	
+}
+@media (max-width:1440px){
+.banner,.banner1,.banner2{
+	min-height:570px;
+}	
 }
 @media (max-width:1366px){
 .banner, .banner1, .banner2 {
     min-height: 540px;
-}
-.mask img {
-    width: 50%;
-        height: 100%;
 }
 }
 @media (max-width:1280px){
@@ -2073,10 +2080,6 @@ h3.ghj {
 }
 .memenu>li>.mepanel {
     top: 45px !important;
-}
-.mask img {
-    width: 50%;
-    height: 100%;
 }
 }
 @media (max-width:1024px){
@@ -2149,10 +2152,6 @@ figure.effect-bubba h4,figure.effect-bubba h2  {
 }
 a.mask {
     padding: 0px 0px;
-}
-.mask img {
-    width: 50%;
-    height: 100%;
 }
 .product-bottom {
     margin-top: 13px;

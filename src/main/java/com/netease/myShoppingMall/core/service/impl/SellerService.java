@@ -142,6 +142,12 @@ public class SellerService implements ISellerService{
 			e.printStackTrace();
 			return null;
 		} 
+	}
+
+	@Override
+	@Transactional
+	public int updateAfterPurchased(Map<String, Object> params) {
+		return goodsMapper.updateAfterPurchased(params);
 	}	
 
 }

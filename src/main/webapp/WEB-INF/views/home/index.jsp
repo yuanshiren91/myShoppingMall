@@ -83,9 +83,9 @@
 								 </c:if>
 							 }
 							 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
-								 list += "<img class='img-responsive zoom-img' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
+								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
 							 } else {
-								 list += "<img class='img-responsive zoom-img' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single'/>";   
+								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single/0'/>";   
 							 }	 
 						list += "</a>"
 							 +	"<div class='product-bottom'>"
@@ -93,17 +93,17 @@
 							 <c:if test="${sessionScope.roleId ne '2'}">
 							 	+	"<h4><a class='item_add' href='javascript:addToCart("+ resultList[i].goodsId + ", 1)'><i></i></a> <span class='item_price'>$ " + resultList[i].unitPrice + "</span></h4>"
 							 </c:if>
-							 if(parseInt(resultList[i]).selledAmount)) > 0) {
+							 if(parseInt(resultList[i].selledAmount) > 0) {
 								 <c:if test="${sessionScope.roleId eq '2'}">
-								 	+   "<span class='had'><b>已售出</b></span>"
+								 	list += "<span class='had'><b>已售出</b></span>"
 								 </c:if>
 							 }
-							 +	"</div>"
+						list +=	"</div>"
 							 +  "</div>" 
 							 +	"</div>"		 
 						 if( i % 4 == 3 || i == resultList.length - 1) {
 							 list += "<div class='clearfix'></div>"
-							 list += "</div>"
+							      + "</div>"
 	                	 }  
                 	}
                    	$(".product-top").html(list);  	
