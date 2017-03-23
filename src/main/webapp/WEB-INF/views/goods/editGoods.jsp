@@ -70,20 +70,18 @@
 									<li style="display:inline-block"><label class="radio"><input type="radio" name="imagePath" value="file"><i></i>本地图片</label></li>
 									<div class="clearfix"></div>
 								</ul>
-<!-- 								<label >图片地址</label> -->
-<!-- 								<input name="imagePath" type="radio" value="url" checked="checked"/> -->
-<!-- 								<label >本地图片</label> -->
-<!-- 								<input name="imagePath" type="radio" value="file"/> -->
 							</div>	
 							<div id="urlUpload" name="upload" style="display:block" class="form-group" >
 								<label class="control-label" for="imgSrc" ></label> 
 								<input type="text" name="imgSrc">
-							</div>	 			
+							</div>			
 							<div id="fileUpload" name="upload" style="display:none" class="form-group">
 								<label class="control-label" ></label> 
-								<input id=imgUpload name="goodsImage" multiple type="file" >
-								<p class="help-block">支持jpg、jpeg、png格式，大小不超过1.0M</p>
-							</div>											
+								<input id=imgUpload name="goodsImage" multiple type="file" >					
+								<p class="help-block">支持jpg、jpeg、png格式，大小不超过1.0M，最多可同时上传3张图片</p>
+<!--  								<a id="btnUpload" name="upload"  href="javascript:void(0)" class="btn btn-primary btn-block">批量上传</a>  -->
+							</div>	
+																
 							<div class="submit-btn">
 								<c:if test="${goodsId eq 0}">
 									<input type="submit" name="save" value="发布">
@@ -139,7 +137,7 @@
 	                        regexp: {
 	                            regexp: /^[0-9]+.?[0-9]*$/,
 	                            message: '商品价格为数字'
-	                        },
+	                        }
 
 	                    }
 	                },
@@ -176,11 +174,17 @@
 	                	}
 	                },
 	                imgSrc:{
-	                	validator:{
+	                	validators:{
 	                		regexp: {
-	                            regexp: /((http|ftp|https|file):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig,
+	                           // regexp: /((http|ftp|https|file):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig,
+	                            regexp: /^(http|ftp|https|file):\/\/([\w\-]+\.).*?\/.*?\.(jpg|png|gif|jpeg)$/i,
 	                            message: 'url地址不合法'
-	                        }
+	                        },
+	                        stringLength: {   
+	                        	min: 2,
+			                    max: 1000,  
+			                    message: 'url地址长度在[2,1000]字符内'  
+		                    }  
 	                	}
 	                }
 	                
@@ -208,6 +212,8 @@
 			});
 			
 			initFileInput("imgUpload", "${contextPath}/seller/uploadImage");
+			
+			//$("#btnUpload").click(upload);
 		
 		});
 		function doEdit(target) {
@@ -231,11 +237,12 @@
 					},
 	                success: function (data, textStatus) {
 	                    if (data.result == 'success') {
-	                    	alert(data.msg);
-	                    	$('#goodsId').val(data.goodsId);
-	                    	loadGoodsInfo();
+	                    	Messager.alert(data.msg).on(function(){
+	                    		$('#goodsId').val(data.goodsId);
+		                    	window.location.href = "${contextPath}/goods/showGoodsInfo?goodsId=" + data.goodsId;
+	                    	});	                    	
 	                    } else {
-	              	    	alert(data.msg);	              	    	
+	                    	Messager.alert(data.msg);	              	    	
 	                    }
 	                    $('input[type="submit"]').removeAttr('disabled');
 	                }
@@ -248,14 +255,15 @@
 		    var control = $('#' + ctrlName); 
 		    
 		    control.fileinput({
-		        language: 'zh', //设置语言
-		        uploadUrl: uploadUrl, //上传的地址
-		        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀
-		        showRemove: true,//是否显示移除按钮
-		        showUpload: true, //是否显示上传按钮
-		        showCaption: true,//是否显示标题
-		        browseClass: "btn btn-primary", //按钮样式             
+		        language: 'zh', 
+		        uploadUrl: uploadUrl, 
+		        allowedFileExtensions : ['jpg', 'png','jpeg'],
+		        showRemove: true,
+		        showUpload: true, 
+		        showCaption: true,
+		        browseClass: "btn btn-primary",             
 		        dropZoneEnabled: false,
+		        showUploadedThumbs: false,
 		        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>", 
 		        maxFileSize: 1024,
 		        maxFileCount: 3,
@@ -265,29 +273,23 @@
 		        	var fileType = "goodsImage";
 		        	return {goodsId:goodsId,fileType:fileType};
 		        }
-		    }).on("fileuploaded", function (e, data) {
+		    }).on("filepreupload", function (event, data, previewId, index) {
+		    	var extra = data.extra;
+		  		if(extra.goodsId == 0){
+		  			return {
+ 		  				message: '请先保存商品信息!',
+ 		  				data: {}
+		  			};
+		  		}
+		    }).on("fileuploaded", function (event, data) {
 		        var res = data.response;
 		        if (res.status == 'success') {
-		            alert("上传成功！");
+		        	Messager.alert("上传成功！");
 		        } else {
-		            alert("上传失败！");
+		        	Messager.alert(res.msg);
 		        }
-		    });
+		    })
 		}
-		
-		//初始化文件上传参数
-        function initFileUploadData(ctrlName, id) {
-            var control = $('#' + ctrlName);
-            var imageurl = '/PictureAlbum/GetPortrait?id=' + id + '&r=' + Math.random();
-
-            //重要，需要更新控件的附加参数内容，以及图片初始化显示
-            control.fileinput('refresh', {
-                uploadExtraData: { id: id },
-                initialPreview: [ 
-                    "<img src='" + imageurl + "' class='file-preview-image' alt='肖像图片' title='肖像图片'>",
-                ],
-            });
-        }
 		
 		function loadGoodsInfo() {
 			var goodsId = $('#goodsId').val();
@@ -304,9 +306,9 @@
 						alert('加载成功！');
 					}
 				});
-			}
-			
+			}	
 		}
+		
 	</script>
 </body>
 </html>
