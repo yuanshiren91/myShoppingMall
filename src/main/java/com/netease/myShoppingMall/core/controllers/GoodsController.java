@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -73,14 +75,15 @@ public class GoodsController extends CommonController{
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getAllGoods") 
 	public PageResult<Goods> getAllGoods(@RequestParam("currentPage") int currentPage, @RequestParam("itemsOnPage") int itemsOnPage, 
-			@RequestParam("status") String status, @RequestParam("keywords") String keywords, HttpServletRequest request, HttpServletResponse response) {
+			@RequestParam("status") String status, @RequestParam("keywords") String keywords, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		Map<String, Object> params = getSessionParams(request);
 		params.put("status", status);
-		params.put("keywords", keywords);
+		params.put("keywords", URLDecoder.decode(keywords, "UTF-8"));
 		PageEntity pageEntity = generatePageEntity(currentPage, itemsOnPage, params);
 		PageResult<Goods> pageResult = goodsService.findByPage(pageEntity);
 		return pageResult;

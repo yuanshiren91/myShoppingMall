@@ -57,7 +57,7 @@
 			params.currentPage = currentPage;
 			params.itemsOnPage = $('#pagination').pagination("getItemsOnPage");
 			params.status = $('[name="status"]').val();
-			params.keywords = $('#keywords').val();
+			params.keywords = encodeURI($('#keywords').val());
 			 $.ajax({
 				type: "GET",
 				dataType: "json",

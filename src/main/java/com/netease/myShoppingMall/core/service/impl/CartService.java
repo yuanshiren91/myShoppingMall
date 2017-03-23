@@ -39,8 +39,7 @@ public class CartService extends BaseService<Map<String, Object>> implements ICa
 	public int checkout(Map<String, Object> params) {
 		orderMapper.checkout(params);
 		goodsMapper.updateAfterPurchased(params);
-		throw new RuntimeException("test");
-		//return cartMapper.deletes(params);		
+		return cartMapper.deletes(params);		
 	    
 	}
 

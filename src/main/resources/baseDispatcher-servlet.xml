@@ -47,7 +47,10 @@
 	<mvc:default-servlet-handler/>
 	
 	<!-- 扫描注解 -->
-	<context:component-scan base-package="com.netease.myShoppingMall" />
+	<context:component-scan base-package="com.netease.myShoppingMall" >
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan>
 	
 	<!-- 开启自动装配 -->
 	<context:annotation-config />

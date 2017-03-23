@@ -70,14 +70,10 @@
 									<li style="display:inline-block"><label class="radio"><input type="radio" name="imagePath" value="file"><i></i>本地图片</label></li>
 									<div class="clearfix"></div>
 								</ul>
-<!-- 								<label >图片地址</label> -->
-<!-- 								<input name="imagePath" type="radio" value="url" checked="checked"/> -->
-<!-- 								<label >本地图片</label> -->
-<!-- 								<input name="imagePath" type="radio" value="file"/> -->
 							</div>	
 							<div id="urlUpload" name="upload" style="display:block" class="form-group" >
 								<label class="control-label" for="imgSrc" ></label> 
-								<input type="text" name="imgSrc">
+								<input type="text" style="width:80%" name="imgSrc">
 							</div>	 			
 							<div id="fileUpload" name="upload" style="display:none" class="form-group">
 								<label class="control-label" ></label> 
@@ -139,7 +135,7 @@
 	                        regexp: {
 	                            regexp: /^[0-9]+.?[0-9]*$/,
 	                            message: '商品价格为数字'
-	                        },
+	                        }
 
 	                    }
 	                },
@@ -176,11 +172,17 @@
 	                	}
 	                },
 	                imgSrc:{
-	                	validator:{
+	                	validators:{
 	                		regexp: {
-	                            regexp: /((http|ftp|https|file):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig,
+	                           // regexp: /((http|ftp|https|file):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig,
+	                            regexp: /^(http|ftp|https|file):\/\/([\w\-]+\.).*?\/.*?\.(jpg|png|gif|jpeg)$/i,
 	                            message: 'url地址不合法'
-	                        }
+	                        },
+	                        stringLength: {   
+	                        	min: 2,
+			                    max: 1000,  
+			                    message: 'url地址长度在[2,1000]字符内'  
+		                    }  
 	                	}
 	                }
 	                
