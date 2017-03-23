@@ -57,7 +57,7 @@
   		<url-pattern>/seller/*</url-pattern>
   	</filter-mapping>
   	  	
-  	<filter>
+	<filter>
   		<filter-name>UrlFilter</filter-name>
   		<filter-class>com.netease.myShoppingMall.base.filter.UrlFilter</filter-class>
   	</filter>
@@ -81,7 +81,7 @@
   	
   	<filter-mapping>
     	<filter-name>encodingFilter</filter-name>
-    	<url-pattern>/</url-pattern>
+    	<url-pattern>/*</url-pattern>
   	</filter-mapping>
   	
   	<session-config>
