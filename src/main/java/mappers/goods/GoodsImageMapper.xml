@@ -85,4 +85,15 @@
 	<delete id="deletes" parameterType="com.netease.myShoppingMall.core.domain.GoodsImage">
 		delete from netease_goodsImages where goodsId = #{goodsId,jdbcType=INTEGER}
 	</delete>
+	
+	<delete id="deletesButOne" parameterType="Map">
+		delete from netease_goodsImages 
+		where goodsId = #{goodsId,jdbcType=INTEGER}
+		<if test="goodsImageList != null and goodsImageList.size > 0">
+			and imgSrc in 
+			<foreach collection="goodsImageList" item="item" open="(" separator="," close=")">
+				#{item.imgSrc,jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	</delete>
 </mapper>

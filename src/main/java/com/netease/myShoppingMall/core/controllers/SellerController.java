@@ -147,19 +147,25 @@ public class SellerController extends CommonController{
 	 * @param response
 	 * @throws IOException
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
-	public void uploadImage(@RequestParam("goodsImage") MultipartFile goodsImage, @RequestParam("fileType") String fileType, @RequestParam("goodsId") Integer goodsId, HttpServletRequest request, HttpServletResponse response) throws IOException {	
+	public Map<String, Object> uploadImage(@RequestParam(value = "goodsImage", required = false) MultipartFile goodsImage, @RequestParam("fileType") String fileType, @RequestParam("goodsId") Integer goodsId, HttpServletRequest request, HttpServletResponse response) throws IOException {	
 		Integer sellerId =(Integer)request.getSession().getAttribute("userId");
-		//卖家ID作为子目录
-		String pathToSave = "goodsImage" + File.separator + sellerId ;
-		String res = sellerService.uploadGoodsImage(goodsImage, pathToSave, goodsId);
-		PrintWriter out = response.getWriter();
-		response.setCharacterEncoding("UTF-8");		
-		response.setContentType("text/json; charset=utf-8");
-		out.print(res);
-		out.flush();
-		out.close();	
-		return;
+		Map<String, Object> res = new HashMap<String, Object>();
+		response.setCharacterEncoding("utf-8");		
+		response.setContentType("text/html; charset=utf-8");
+		if(goodsId == 0) {
+			res.put("status", "fail");
+			res.put("msg", "请先保存商品信息！");
+		} else if(goodsImage != null) {
+			//卖家ID作为子目录
+			String pathToSave = "goodsImage" + File.separator + sellerId ;
+			res = sellerService.uploadGoodsImage(goodsImage, pathToSave, goodsId);	
+		}
+//		out.print(res);
+//		out.flush();
+//		out.close();
+		return res;
 	}
 	
 	/**

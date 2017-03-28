@@ -34,8 +34,9 @@
 						<ul class="unit">
 							<li><span>项目</span></li>
 							<li><span>商品名称</span></li>	
-							<li><span>数量</span><li>	
-							<li><span>价格</span></li>
+							<li><span>商品单价</span></li>
+							<li><span>库存数量</span></li>	
+							<li><span>售出数量</span></li>
 							<div class="clearfix"> </div>
 						</ul>			
 					</div>
@@ -82,29 +83,57 @@
                 	var resultList = data.resultList;
                 	var list = "";
                 	for(var i = 0; i < resultList.length ; i ++) {
-                		list += '<ul class="cart-header">'
-               			 	 +  '<div class="delete"> </div>'
+                		list += '<ul class="cart-header" >'	
+                			 if(resultList[i].isValid != "1") {
+		            				list += "<span class='invalid'><b>已失效</b></span>"
+		            			}
+               			list +=  '<div class="delete"> </div>'
                			 	 +  '<div class="edit"> </div>'
+               			 	 +  '<input type="hidden" name="isValid" value="' +resultList[i].isValid + '">'
                			 	 +  '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a style="width:50px" href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
+     						 +  '<li class="ring-in"><a style="width:50px" href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '">'
+               			 	 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="' + resultList[i].imgSrc + '"/>'; 
+							 } else {
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0"/>';   
+							 }	
+     					list += '</a></li>'
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
-							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
-							 +	'<li><span class="cost">' + resultList[i].priceSum + '</span></li>'
+							 +	'<li><span class="cost">' + resultList[i].unitPrice + '</span></li>'
+							 +  '<li><span class="amount">' + resultList[i].amount + '</span></li>'
+							 +  '<li><span class="amount">' + resultList[i].selledAmount + '</span></li>'
 							 +  '<div class="clearfix"> </div>'
 							 +  '</ul>';
                 	}
                    	$("#goodsItems").html(list);  
-                   	
-                   	$(".edit").click(function(c) {
-                   		var goodsId = $(this).parent().find('[name="goodsId"]').val();
-                   		window.location.href = "${contextPath}/seller/editGoods?goodsId=" + goodsId;  
+                   
+                  	$('.ring-in').each(function(){
+                  		var element = $(this).find('a');
+                  		var isValid = $(element).parent().siblings('[name="isValid"]').val();
+                   		if(isValid != "1"){
+                   			$(element).attr('href', "javaScript:void(0);");
+                   		}
                    	});
+                   	$(".edit").each(function(){
+                   		var isValid = $(this).parent().find('[name="isValid"]').val();
+                   		if(isValid == "1"){
+	                   		$(this).click(function(c) {
+	                       		var goodsId = $(this).parent().find('[name="goodsId"]').val();
+	                       		window.location.href = "${contextPath}/seller/editGoods?goodsId=" + goodsId;  
+	                       	});
+                   		}
+                   	})
                    	
-                   	$('.delete').click(function(c) {
-                   		var goodsId = $(this).parent().find('[name="goodsId"]').val();
-                   		deleteItem(this, goodsId);                   		
-                   	});
-                }
+                   	$('.delete').each(function(){
+                   		var isValid = $(this).parent().find('[name="isValid"]').val();
+                   		if(isValid == "1"){
+	                   		$(this).click(function(c) {
+	                       		var goodsId = $(this).parent().find('[name="goodsId"]').val();
+	                       		deleteItem(this, goodsId);                   		
+	                       	});
+                   		}
+                   	})
+                   }
 			});		
 		}
 
@@ -125,12 +154,13 @@
     				},
     				success: function (data, textStatus) {
                         if (data.status == 'success') {
-                        	alert(data.msg);
+                        	Messager.alert(data.msg);
                         	$(target).parent().fadeOut('slow', function(c){
                         		$(target).parent().remove();
-    						}); 
+                        		$("#pagination").common("refreshPage");
+    						});                         	
                         } else {
-                        	alert(data.msg);
+                        	Messager.alert(data.msg);
                         }
                     }
     			});

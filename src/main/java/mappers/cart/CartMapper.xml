@@ -18,7 +18,10 @@
 		<if test="status == null or status ==''">
 			ifnull(sum(purchasedAmount),0) total
 		</if> 
-		from netease_shopcart where userId = #{userId,jdbcType=INTEGER}
+		from netease_shopcart where 1=1 
+		<if test="userId != null and userId !=''">
+			and userId = #{userId,jdbcType=INTEGER}
+		</if>
 		<if test="goodsId !=null and goodsId != ''">
 			and goodsId = #{goodsId, jdbcType=VARCHAR}
 		</if>
@@ -35,7 +38,7 @@
 	<select id="findByPage" parameterType="Map" resultType="Map">
 		select 
 		<include refid="Base_Column_List" />
-		,a.purchasedAmount*b.unitPrice as priceSum, b.goodsName, b.imgSrc from netease_shopcart a
+		,b.unitPrice, a.purchasedAmount*b.unitPrice as priceSum, b.goodsName, b.imgSrc, b.isValid from netease_shopcart a
 		left join netease_goodsInfo b on a.goodsId = b.goodsId
 		where a.userId = #{userId,jdbcType=INTEGER} 
 		
@@ -65,13 +68,11 @@
 	<delete id="deletes" parameterType="Map">
 		delete from netease_shopcart
 		where userId = #{userId,jdbcType=INTEGER}
-		<if test="status != 'all'">
-			<if test="goodsIds != null">
-				and goodsId in
-				<foreach collection="goodsIds" item="item" open="(" separator="," close=")">
-					#{item,jdbcType=INTEGER}
-				</foreach>
-			</if>
+		<if test="goodsIds != null">
+			and goodsId in
+			<foreach collection="goodsIds" item="item" open="(" separator="," close=")">
+				#{item,jdbcType=INTEGER}
+			</foreach>
 		</if>
 	</delete>
 	

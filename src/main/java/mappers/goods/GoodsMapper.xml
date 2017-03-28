@@ -79,7 +79,7 @@
 		<if test="status == 'unSelled' ">
 			and a.goodsId not in(select goodsId from netease_orderInfo where isCompleted = '1')
 		</if>
-		
+				
 		<include refid="fuzzy_query"/>
 		<include refid="precise_query"/>
 	</select>
@@ -87,8 +87,8 @@
 	<select id="findByPage" parameterType="Map" resultMap="Goods">
 		select 
 		<include refid="Base_Column_List" />
-		,ifnull(b.purchasedAmount, 0) as selledAmount from netease_goodsinfo a
-		left join netease_orderInfo b on a.goodsId = b.goodsId and b.isCompleted = '1' 		
+		,ifnull(sum(b.purchasedAmount), 0) as selledAmount from netease_goodsinfo a
+		left join netease_orderInfo b on a.goodsId = b.goodsId and b.isCompleted = '1'
 		<!-- 买家 -->
 		<if test="roleId !=null and roleId !='' and roleId == 1 and userId != null and userId !=''">
 			and b.userId = #{userId,jdbcType=INTEGER}
@@ -112,10 +112,14 @@
 		</if>
 		<if test="status == 'unSelled' ">
 			and a.goodsId not in(select goodsId from netease_orderInfo where isCompleted = '1')
-		</if>		
-		<include refid="fuzzy_query"/>
+		</if>	
 		
-		<if test="ifOrder !=null and ifOrder == true">
+		<include refid="fuzzy_query"/>
+		<include refid="precise_query"/>
+		
+		group by a.goodsId
+		
+		<if test="ifOrderBySelledAmount !=null and ifOrderBySelledAmount == true">
 			order by selledAmount desc	
 		</if>	
 		<include refid="pagePagination" />	
@@ -124,13 +128,16 @@
 	<select id="findOne" parameterType="Map" resultMap="Goods">
 		select
 		<include refid="Base_Column_List" />
-		from netease_goodsInfo a 
+		,ifnull(sum(b.purchasedAmount), 0) as selledAmount from netease_goodsinfo a
+		left join netease_orderInfo b on a.goodsId = b.goodsId and b.isCompleted = '1'
 		where a.goodsId = #{goodsId,jdbcType=INTEGER}
 	</select>
 	
 	<select id="findList" parameterType="Map" resultMap="Goods">
 		select
 		<include refid="Base_Column_List" />
+		,ifnull(sum(b.purchasedAmount), 0) as selledAmount from netease_goodsinfo a
+		left join netease_orderInfo b on a.goodsId = b.goodsId and b.isCompleted = '1'	
 		from netease_goodsInfo a 
 		where 1=1 
 		<include refid="precise_query" />
@@ -230,13 +237,12 @@
 		<foreach collection="goodsIds" item="item" open="" separator=";" close="">
 			update netease_goodsInfo 
 			set amount = amount - (select purchasedAmount from netease_shopcart 
-			where userId = #{userId,jdbcType=VARCHAR} and goodsId = #{item,jdbcType=INTEGER})
+			where userId = #{userId,jdbcType=INTEGER} and goodsId = #{item,jdbcType=INTEGER})
 			where goodsId = #{item,jdbcType=INTEGER}
 		</foreach>
         
 	</update>
-		
-	
+
 	<delete id="deleteOne" parameterType="com.netease.myShoppingMall.core.domain.Goods">
 		delete from netease_goodsInfo where goodsId = #{goodsId,jdbcType=INTEGER}
 			and sellerId = #{sellerId,jdbcType=INTEGER}

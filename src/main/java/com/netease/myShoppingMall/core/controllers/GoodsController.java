@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -64,6 +66,8 @@ public class GoodsController extends CommonController{
 	public int countGoods(@RequestParam("status") String status, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> params = getSessionParams(request);
 		params.put("status", status);
+		//只统计有效商品数量
+		params.put("isValid", "1");
 		int total = goodsService.count(params);
 		return total;
 	}
@@ -73,14 +77,20 @@ public class GoodsController extends CommonController{
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getAllGoods") 
 	public PageResult<Goods> getAllGoods(@RequestParam("currentPage") int currentPage, @RequestParam("itemsOnPage") int itemsOnPage, 
-			@RequestParam("status") String status, @RequestParam("keywords") String keywords, HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> params = getSessionParams(request);
-		params.put("status", status);
-		params.put("keywords", keywords);
+			HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+		Map<String, Object> params = getRequestParams(request);
+		params.putAll(getSessionParams(request));
+		if(params.get("keywords") != null) {
+			params.put("keywords", URLDecoder.decode(params.get("keywords").toString(),"UTF-8"));
+		}
+		//只显示有效的商品
+		params.put("isValid", "1");
+		params.put("isCompleted", "1");
 		PageEntity pageEntity = generatePageEntity(currentPage, itemsOnPage, params);
 		PageResult<Goods> pageResult = goodsService.findByPage(pageEntity);
 		return pageResult;
@@ -95,8 +105,10 @@ public class GoodsController extends CommonController{
 	@ResponseBody
 	@RequestMapping(value = "/getMostPopular/{itemsCount}")
 	public List<Goods> getMostPopularGoods(@PathVariable("itemsCount") Integer itemsCount, HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = getSessionParams(request);
 		params.put("itemCount", itemsCount);
+		//只显示有效商品
+		params.put("isValid", "1");
 		List<Goods> resultList = goodsService.findMostPopularGoods(params);
 		return resultList;
 	}
@@ -129,9 +141,9 @@ public class GoodsController extends CommonController{
 	@ResponseBody
 	@RequestMapping("/getGoodsInfo")
 	public Goods getGoodsInfo(@RequestParam("goodsId") Integer goodsId, HttpServletRequest request, HttpServletResponse response) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = getSessionParams(request);
 		params.put("goodsId", goodsId);
-		Goods goods = goodsService.findOne(params);
+		Goods goods = goodsService.getGoodsInfo(params);
 		return goods;
 	}
 		

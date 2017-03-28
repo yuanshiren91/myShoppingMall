@@ -123,7 +123,7 @@
 				data:JSON.stringify(params),
 				contentType:"application/json; charset=utf-8",
 				error: function (data) { 
-					alert('login error');
+					Messager.alert('login error');
 					$("#btnLogin").attr('disabled', 'enable').html('登录');
 				},
                 success: function (data, textStatus) {

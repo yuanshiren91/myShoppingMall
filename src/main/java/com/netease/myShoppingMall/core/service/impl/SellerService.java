@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -96,12 +98,15 @@ public class SellerService implements ISellerService{
 		if(exist > 0) {
 			//商品设为无效
 			goods.setIsValid("0");
+			//图片库中指保留一张，用于页面显示
+			this.deleteGoodsImages(goods, true);
 			if(goodsMapper.update(goods) > 0) {
 				res.put("status", "success");
 				res.put("msg", "商品已存在于订单或购物车中，已被标记为无效！" );
 				return res;
 			}
 		} else {
+			this.deleteGoodsImages(goods, false);
 			if(goodsMapper.deleteOne(goods) > 0){
 				res.put("status", "success");
 				res.put("msg", "商品删除成功！");
@@ -110,37 +115,47 @@ public class SellerService implements ISellerService{
 		}
 		
 		res.put("status", "fail");
+		res.put("msg", "商品删除失败！");
 		return res;
 	}
 
 	@Override
 	@Transactional
-	public String uploadGoodsImage(MultipartFile goodsImage, String pathToSave, Integer goodsId) {
+	public Map<String, Object> uploadGoodsImage(MultipartFile goodsImage, String pathToSave, Integer goodsId) {
+		Map<String, Object> res = new HashMap<String, Object>();
 		try {
 			//判断图片大小，若不符合，返回
 			if(goodsImage.getSize() > UPLOAD_IMAGE_SIZE ) {
-				return "{\"status:\"fail\",\"msg:\"文件大小超过标准！\"}";
+				res.put("status", "fail");
+				res.put("msg", "文件大小超过标准！");
+				//return "{\"status\":\"fail\",\"msg\":\"文件大小超过标准！\"}";
 			} else {
 				//用商品ID和时间作为文件名
 				String newFileName = goodsId + "_" + new Date().getTime();
 				String savedImgPath = FileUploadUtil.uploadFile(goodsImage, pathToSave, newFileName);
-				String jsonObject = "";
+				//String jsonObject = "";
 				if(savedImgPath != null) {
-					jsonObject = "{\"status\":\"success\"}";
+					res.put("status", "success");
+					res.put("msg", "上传成功！");
+					//jsonObject = "{\"status\":\"success\"}";
 				} else {
-					jsonObject = "{\"status\":\"fail\"}";
+					res.put("status", "fail");
+					res.put("msg", "上传失败！");
+					//jsonObject = "{\"status\":\"fail\"}";
 				} 
 				if(savedImgPath != null) {
 					GoodsImage image = new GoodsImage();
 					image.setGoodsId(goodsId);
 					image.setImgSrc(savedImgPath);
 					goodsImageMapper.insert(image);
-				}
-				return jsonObject;
+				}	
 			}	
+			return res;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			res.put("status", "fail");
+			res.put("msg", "上传失败！");
+			return res;
 		} 
 	}
 
@@ -149,5 +164,32 @@ public class SellerService implements ISellerService{
 	public int updateAfterPurchased(Map<String, Object> params) {
 		return goodsMapper.updateAfterPurchased(params);
 	}	
+		
+	@Override
+	@Transactional
+	public int deleteGoodsImages(Goods goods, boolean exist) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("goodsId", goods.getGoodsId());
+		List<GoodsImage> goodsImageList = goodsImageMapper.findList(params);
+		Iterator<GoodsImage> iter = goodsImageList.iterator();
+		try {
+			if(exist) {
+				//保留第一张图片
+				if(iter.hasNext()) {
+					iter.next();
+					iter.remove();
+				}
+			}
+			while(iter.hasNext()){
+				FileUploadUtil.deleteFile(iter.next().getImgSrc());
+			} 
+			params.put("goodsImageList", goodsImageList);
+			goodsImageMapper.deletesButOne(params);
+			return 1;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return 0;
+		} 
+	}
 
 }

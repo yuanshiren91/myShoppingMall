@@ -4,7 +4,7 @@
 (function ($) {
 	
 	//填充表单数据
-	var fillForm = function (target, data) {
+	var _fillForm = function (target, data) {
 		var form = $(target);
 	    var jsonObj = data;
 	    if (typeof data === 'string') {
@@ -83,10 +83,15 @@
 	}
 	
 	//加载表单数据
-	function loadForm(target, options) {
-    	var t = $(target);
-    	if(options && options.url && new RegExp("/(-?[\\d+|\\w])").test(options.url)) {
-    		var opts = $.extend($.fn.common.loadFormOptions, $.fn.common.defaultsOfAjax, {}, options);
+	var _loadForm = function(target, options) {
+    	var t = $(target);   
+    	var opts = $.data(target,"formOpts");
+    	if(opts) {
+    		$.extend(opts, options);
+    	} else {
+    		opts = $.data(target, "formOpts",  $.extend({}, $.fn.common.defaultsOfAjax, {}, options));
+    	}
+    	if(opts && opts.url && new RegExp("/(-?[\\d+|\\w])").test(opts.url)) {
     		$.ajax({
                 async: opts.async,
                 cache: opts.cache,
@@ -100,7 +105,7 @@
                 success: function(data, status, XHR) {
                     t.css({ visibility: "visible" });   
                     //填充数据
-                    fillForm(target, data);
+                    _fillForm(target, data);
                 	//命名Combo
                 	if(opts.names && opts.names.length > 0) {
                     	for(var i = 0; i < opts.names.length; i++) {
@@ -126,19 +131,19 @@
             });
     	}
     	else {
-    		fillForm(target, options);
+    		_fillForm(target, options);
     	}
     }
 	
-	//刷新表单
-	var refreshForm = function(target) {
-		loadForm(target, $.fn.common.loadFormOptions);
-	}
-	
-	var initPagination = function (target, options) {
+	var _initPagination = function (target, options) {
 		var t = $(target);
-		if(options && options.url && new RegExp("/(-?[\\d+|\\w])").test(options.url)) {
-    		var opts = $.extend({}, $.fn.common.defaultsOfInitPagination, {}, options);
+		var opts = $.data(target, 'paginationOpts');
+		if(opts) {
+			$.extend(opts, options);
+		} else {
+			opts = $.data(target, 'paginationOpts', $.extend({}, $.fn.common.defaultsOfInitPagination, {}, options));
+		}
+		if(opts && opts.url && new RegExp("/(-?[\\d+|\\w])").test(opts.url)) {
 			$.ajax({
 				type: "GET",
 				dataType: "json",
@@ -166,6 +171,16 @@
 		}
 	}
 	
+	//刷新表单
+	var _refreshForm = function(target) {
+		_loadForm(target, {});
+	}
+
+	//刷新分页
+	var _refreshPage =  function(target) {
+		_initPagination(target, {});
+	}
+	
 	$.fn.common = function(options, params) {
         if (typeof options == "string") {
             var fn = $.fn.common.methods[options];
@@ -178,17 +193,22 @@
 	$.fn.common.methods = {
 		loadForm : function(target, params) {
 			return target.each(function() {
-				loadForm(this, params);
+				_loadForm(this, params);
 			});
 		},
 		refreshForm : function(target) {
 			return target.each(function() {
-				refreshForm(this);
+				_refreshForm(this);
 			});
 		},
 		initPagination : function(target, params) {
 			return target.each(function() {
-				initPagination(this, params);
+				_initPagination(this, params);
+			});
+		},
+		refreshPage : function(target) {
+			return target.each(function() {
+				_refreshPage(this);
 			});
 		}
 	}
@@ -196,22 +216,18 @@
 	$.fn.common.defaultsOfInitPagination = {
 			itemsOnPage: 1
 	}
+	
 	$.fn.common.defaultsOfAjax = {
 			async: true,
 	        cache: false,
 	        type: "GET",
-	        url: null,
 	        contentType: "application/json; charset=utf-8",
-	        data: null,
 	        dataType: "json",
 	        onBeforeLoad: function(XHR) { return true; },
 	        onLoadSuccess: function(data, status, XHR) {},
 	        onLoadError: function(XHR, status, errorThrow) {},
 	        onLoadComplete: function(XHR, status) {}	
 	};
-	$.fn.common.loadFormOptions = {
-			
-	}
 	
 	/**
 	 * 判断一个元素是否使用append添加内容

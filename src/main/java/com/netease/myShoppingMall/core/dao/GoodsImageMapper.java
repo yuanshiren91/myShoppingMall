@@ -11,4 +11,6 @@ import com.netease.myShoppingMall.core.domain.GoodsImage;
 @Repository
 public interface GoodsImageMapper extends BaseMapper<GoodsImage>{
 	
+	//删除商品所有照片，只保留一张用以页面显示
+	public int deletesButOne(Map<String, Object> params);
 }

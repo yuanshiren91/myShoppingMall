@@ -30,6 +30,7 @@
 				<div class="col-md-9 single-main-left" >
 				<form id="dataForm" role="form">
 				<input type="hidden" id="goodsId" name="goodsId" value="${goodsId}"/>
+				<input type="hidden" id="imgSrc" name="imgSrc" />
 				<div class="sngl-top">
 					<div class="col-md-5 single-top-left">	
 						<div class="flexslider">
@@ -131,8 +132,8 @@
 		$(function() {			
 			//加载商品信息
 			loadGoodsInfo();
-						
-		    var menu_ul = $('.menu_drop > li > ul'),
+			
+			var menu_ul = $('.menu_drop > li > ul'),
 		           menu_a  = $('.menu_drop > li > a');
 		    
 		    menu_ul.hide();
@@ -154,7 +155,7 @@
 				});	
 			</c:if>
 			<c:if test="${not empty isPurchased and isPurchased eq true }">
-				$('#btnAddToCart').addClass("add-cart-disable");
+				$('#btnAddToCart').addClass("btn-disable");
 				$('.quantity-add').unbind("click");
 				$('.quantity-remove').unbind("click");	
 			</c:if>
@@ -163,24 +164,16 @@
 				var purchasedAmount = parseInt($(this).val());
 				var amount = parseInt($("#amount").html());
 				if(purchasedAmount > amount || amount == 0) {
-					$("#btnAddToCart").addClass("add-cart-disable");
+					$("#btnAddToCart").addClass("btn-disable");
 				} else {
-					$("#btnAddToCart").removeClass("add-cart-disable");
+					$("#btnAddToCart").removeClass("btn-disable");
 				}
 			});
-			
-			//加载轮播图片
-			loadFlexslider();
-			//初始化轮播图片插件
-			$('.flexslider').flexslider({
-				animation: "slide",
-				controlNav: "thumbnails",
-				directionNav: false
-		  	});
 			
 			//加载最受欢迎的商品
 			var mostPopularItems = 3;
 			loadMostPopular(mostPopularItems);
+			
 
 		});
 		
@@ -196,8 +189,16 @@
 				},
 				onLoadComplete : function () {
 					if(parseInt($('#amount').html()) == 0) {
-						$("#btnAddToCart").addClass("add-cart-disable");
+						$("#btnAddToCart").addClass("btn-disable");
 					}	
+					//加载轮播图片
+					loadFlexslider();
+					//初始化轮播图片插件
+					$('.flexslider').flexslider({
+						animation: "slide",
+						controlNav: "thumbnails",
+						directionNav: false
+				  	});
 				}
 			});
 		}
@@ -205,11 +206,17 @@
 		//加载轮播图片
 		function loadFlexslider() {
 			$('.slides').find('li').each(function (index) {
-				$(this).attr("data-thumb","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + index);			
-				$(this).find("img").attr("src","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + index);
-				$(this).find("img").error(function(){
-					$(this).src='${imagesPath}/noPic.jpg';
-				});
+				var imgUrl = $('#imgSrc').val();
+				if(index == 0 && imgUrl != "") {
+					$(this).attr("data-thumb", imgUrl);			
+					$(this).find("img").attr("src", imgUrl);
+				} else {
+					$(this).attr("data-thumb","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + (index - (imgUrl == "" ? 0 : 1 )));			
+					$(this).find("img").attr("src","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + (index - (imgUrl == "" ? 0 : 1 )));
+					$(this).find("img").error(function(){
+						$(this).src='${imagesPath}/noPic.jpg';
+					});
+				}
 			});
 		}
 		
@@ -222,7 +229,7 @@
 				var params = {};
 				params.goodsId = $("#goodsId").val();
 				params.purchasedAmount = $("#purchasedAmount").val();
-				$('#btnAddToCart').addClass("add-cart-disable");
+				$('#btnAddToCart').addClass("btn-disable");
 				$.ajax({
 					type: "POST",
 					dataType: "json",
@@ -237,12 +244,12 @@
 					},
 					success: function(data, textStatus) {
 						var res = eval("(" + data + ")");
-						alert(res.msg);					
+						Messager.alert(res.msg);					
 						if (res.status == 'success') {	
-							$('#dataForm').common("refresh");
 							getCartCount();
 						} 
-						$('#btnAddToCart').removeClass("add-cart-disable");
+						$('#btnAddToCart').removeClass("btn-disable");
+						
 					}
 				});
 			});
@@ -262,22 +269,24 @@
                 	var resultList = data;
                 	var list = "";
                 	for(var i = 0; i < resultList.length ; i ++) {
-                		list += '<div class="col-md-4 product-left p-left">' 
-						     +  '<div class="product-main simpleCart_shelfItem">'
-							 +  '<a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" class="mask">';
-							 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
-								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
-							 } else {
-								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single/0'/>";   
-							 }	
-						list += "</div>"
-							 +  '<div class="product-bottom">'
-							 +	'<h3>' + resultList[i].goodsName + '</h3>'
-							 +	'<p>' + resultList[i].abstractInfo + '</p>'
-							 +	'<h4><span class=" item_price">$' + resultList[i].unitPrice + '</span></h4>'
-							 +  '</div>'
-						     +  '</div>'
-							 +  '</div>'		
+                		if(resultList[i].isValid == "1") {
+                			list += '<div class="col-md-4 product-left p-left">' 
+   						     +  '<div class="product-main simpleCart_shelfItem">'
+   							 +  '<a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" class="mask">';
+   							 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
+   								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='" + resultList[i].imgSrc + "'/>"; 
+   							 } else {
+   								 list += "<img class='img-responsive zoom-img' onerror='javascript:this.src=\"${imagesPath}/noPic.jpg\"' alt='" + resultList[i].goodsName + "' src='${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single/0'/>";   
+   							 }	
+   						list += "</a>"
+   							 +  '<div class="product-bottom">'
+   							 +	'<h3>' + resultList[i].goodsName + '</h3>'
+   							 +	'<p>' + resultList[i].abstractInfo + '</p>'
+   							 +	'<h4><span class=" item_price">$' + resultList[i].unitPrice + '</span></h4>'
+   							 +  '</div>'
+   						     +  '</div>'
+   							 +  '</div>'		
+                		}
                 	}
                 	list += '<div class="clearfix"></div>';
                    	$(".product-one").html(list);  	

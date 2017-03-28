@@ -13,6 +13,39 @@
 	<div class="about"> 
 		<div class="container">
 			<div class="about-top grid-1">
+				<div class="col-md-4 about-left">
+					<a>
+					<figure class="effect-bubba">
+						<img name="mostPopular_0" class="img-responsive" onerror="javascript:this.src='${imagesPath}/noPic.jpg'" src="" alt=""/>
+						<figcaption>	
+							<h2></h2>
+							<p></p>
+						</figcaption>
+					</figure>
+					</a>
+				</div>
+				<div class="col-md-4 about-left">
+					<a>
+					<figure class="effect-bubba">
+						<img name="mostPopular_1" class="img-responsive" onerror="javascript:this.src='${imagesPath}/noPic.jpg'" src="" alt=""/>
+						<figcaption>	
+							<h2></h2>
+							<p></p>
+						</figcaption>
+					</figure>
+					</a>
+				</div>
+				<div class="col-md-4 about-left">
+					<a>
+					<figure class="effect-bubba">
+						<img name="mostPopular_2" class="img-responsive" onerror="javascript:this.src='${imagesPath}/noPic.jpg'" src="" alt=""/>
+						<figcaption>
+							<h2></h2>
+							<p></p>
+						</figcaption>
+					</figure>
+					</a>
+				</div>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -38,7 +71,7 @@
 			loadMostPopular(mostPopularItems);
 			
 			//初始化分页插件
-			var defaultItemsOnPage = 8;	
+			var defaultItemsOnPage = 12;	
 			var status = $('[name="status"]').val();
 			var url = "${contextPath}/goods/countAllGoods?status=" + status;
 			$("#pagination").common("initPagination",{
@@ -57,7 +90,7 @@
 			params.currentPage = currentPage;
 			params.itemsOnPage = $('#pagination').pagination("getItemsOnPage");
 			params.status = $('[name="status"]').val();
-			params.keywords = $('#keywords').val();
+			params.keywords = encodeURI($('#keywords').val());
 			 $.ajax({
 				type: "GET",
 				dataType: "json",
@@ -74,7 +107,7 @@
                 		if( i % 4 == 0) {
                 			list += "<div class='product-one'>"
                 		} 
-                		list +=  "<div class='col-md-3 product-left'>"
+                		list += "<div class='col-md-3 product-left'>"
 							 + "<div class='product-main simpleCart_shelfItem'>"
 							 + "<a href='${contextPath}/goods/showGoodsInfo?goodsId=" + resultList[i].goodsId + "' class='mask'>";
 							 if(parseInt(resultList[i].selledAmount) > 0) {
@@ -121,21 +154,19 @@
 				error: function (data) { 
 					alert('运行超时，请重试！');
 				},
-                success: function (data, textStatus) {
+                success: function (data, textStatus) {                	
                 	var resultList = data;
                 	var list = "";
                 	for(var i = 0; i < resultList.length ; i ++) {
-                		list += '<div class="col-md-4 about-left">'
-							 + '<figure class="effect-bubba">'
-							 + '<img class="img-responsive" src="${imagesPath}/abt-1.jpg" alt=""/>'
-							 + '<figcaption>'
-							 + '	<h2>' + resultList[i].goodsName + '</h2>'
-							 + '	<p>' + resultList[i].abstractInfo + '</p>'	
-							 + '</figcaption>'			
-							 + '</figure>'
-							 + '</div>'
-                	}
-                   	$(".about-top").html(list);  	
+                		$('[name="mostPopular_' + i + '"]').parent().parent().attr("href", "${contextPath}/goods/showGoodsInfo?goodsId=" + resultList[i].goodsId);
+                		if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
+                			$('[name="mostPopular_' + i + '"]').attr("src", resultList[i].imgSrc);
+						 } else {
+							$('[name="mostPopular_' + i + '"]').attr("src", "${contextPath}/goods/showGoodsImage/" + resultList[i].goodsId+ "/single/0");   
+						 }
+                		$('[name="mostPopular_' + i + '"]').siblings("figcaption").find("h2").html(resultList[i].goodsName);
+                		$('[name="mostPopular_' + i + '"]').siblings("figcaption").find("p").html(resultList[i].abstractInfo);
+                	}	
                 }
 			});	
 		}
@@ -164,7 +195,7 @@
 					},
 					success: function(data, textStatus) {
 						var res = eval("(" + data + ")");
-						alert(res.msg);					
+						Messager.alert(res.msg);					
 						if (res.status == 'success') {
 							getCartCount();
 						} 

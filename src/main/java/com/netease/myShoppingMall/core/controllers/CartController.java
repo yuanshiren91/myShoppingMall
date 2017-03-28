@@ -115,11 +115,13 @@ public class CartController extends CommonController{
 		Map<String, Object> res = new HashMap<String, Object>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("goodsId", goodsInfo.getGoodsId());
-		params.put("userId", request.getSession().getAttribute("userId"));
+		params.put("userId", (Integer)request.getSession().getAttribute("userId"));
 		if(cartService.deleteOne(params) > 0) {
 			res.put("status", "success");
+			res.put("msg", "删除成功！");
 		} else {
 			res.put("status", "fail");
+			res.put("msg", "删除失败！");
 		}
 		return res;
 	}
@@ -133,11 +135,10 @@ public class CartController extends CommonController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/checkout", method = RequestMethod.POST)
-	public int checkout(@RequestBody Map<String, Object> goodsInfo, HttpServletRequest request, HttpServletResponse response) {
+	public String checkout(@RequestBody Map<String, Object> goodsInfo, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("goodsIds", goodsInfo.get("goodsIds"));
-		params.put("userId", request.getSession().getAttribute("userId"));
-		params.put("status", goodsInfo.get("status"));
+		params.put("userId", (Integer)request.getSession().getAttribute("userId"));
 		return cartService.checkout(params);
 	}
 	

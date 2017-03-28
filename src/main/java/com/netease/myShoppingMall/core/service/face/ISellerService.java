@@ -13,7 +13,9 @@ public interface ISellerService {
 	
 	public Map<String, Object> deleteMyGoods(Goods goods);
 	
-	public String uploadGoodsImage(MultipartFile goodsImage, String pathToSave, Integer goodsId);
+	public Map<String, Object> uploadGoodsImage(MultipartFile goodsImage, String pathToSave, Integer goodsId);
+	
+	public int deleteGoodsImages(Goods goods, boolean exist);
 	
 	public int updateAfterPurchased(Map<String, Object> params);
 

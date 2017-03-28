@@ -34,7 +34,8 @@
 						<ul class="unit">
 							<li><span>项目</span></li>
 							<li><span>商品名称</span></li>	
-							<li><span>数量</span><li>	
+							<li><span>购买数量</span><li>	
+							<li><span>商品单价</span>
 							<li><span>总价</span></li>
 							<div class="clearfix"> </div>
 						</ul>			
@@ -42,7 +43,7 @@
 					<div id="cartItems" class="in-check" >		
 					</div>
 					<div style="text-align:right">
-						<a href="javascript:void(0);" id="btnCheckout" onclick="checkout('all')" class="check-out">购买</a>
+						<a href="javascript:void(0);" id="btnCheckout" onclick="checkout()" class="check-out">购买</a>
 						<a href="javascript:void(0);" id="btnExit" onclick="history.back(-1);"class="exit">退出</a>
 					</div>
 					<div style="text-align:center">
@@ -87,11 +88,22 @@
                 	var list = "";
                 	for(var i = 0; i < resultList.length ; i ++) {
                 		list += '<ul class="cart-header">'
-                			 +  '<div class="delete"> </div>'
+                			 if(resultList[i].isValid != "1") {
+		            				list += "<span class='invalid'><b>已失效</b></span>"
+		            			}
+                		list +=  '<div class="delete"> </div>'
+              			 	 +  '<input type="hidden" name="isValid" value="' +resultList[i].isValid + '">'
                 			 +  '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
+							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" >'
+							 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="' + resultList[i].imgSrc + '"/>'; 
+							 } else {
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0"/>';   
+							 }
+						list += '</a></li>'	
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
  							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
+ 							 +  '<li><span class="amount">' + resultList[i].unitPrice + '</span></li>'
  							 +	'<li><span class="cost">' + resultList[i].priceSum + '</span></li>'
 							 +  '<div class="clearfix"> </div>'
 							 +  '</ul>';
@@ -101,6 +113,11 @@
                    		var goodsId = $(this).parent().find('[name="goodsId"]').val();
                    		deleteFromCart(this, goodsId);                   		
                    	});
+                   	if(resultList.length <= 0 ) {
+                   		$('#btnCheckout').addClass("btn-disable");
+                   	} else {
+                   		$('#btnCheckout').removeClass("btn-disable");
+                   	}
                 }
 			});				
 		}
@@ -122,12 +139,15 @@
     				},
     				success: function (data, textStatus) {
                         if (data.status == 'success') {
+                        	Messager.alert(data.msg);
                         	$(target).parent().fadeOut('slow', function(c){
                         		$(target).parent().remove();
-    						});
-                        	getCartCount();
+                        		
+    						}); 
+                        	$("#pagination").common("refreshPage");
+                    		getCartCount();
                         } else {
-                        	alert("删除失败！");
+                        	Messager.alert(data.msg);
                         }
                     }
     			});
@@ -135,7 +155,7 @@
 			
 		}
 		
-		function checkout(status) {
+		function checkout() {
 			var confirmMsg = "购买购物车中内容";
 			Messager.confirm({ message: "确认" + confirmMsg }).on(function (e) {
                 if (!e) {
@@ -144,11 +164,15 @@
 				var params = {};
 				var goodsIds = new Array();
 				$(".cart-header").each(function () {
-					goodsIds.push($(this).find("[name='goodsId']").val());
+					if($(this).find("[name='isValid']").val() == "1" ) {
+						goodsIds.push($(this).find("[name='goodsId']").val());
+					}
 				});
-				params.status = status;
-				params.goodsIds = goodsIds;
-				
+				if(goodsIds.length <= 0 ){
+					Messager.alert("购物车中无有效商品！");
+					return false;
+				}
+				params.goodsIds = goodsIds;				
 				$.ajax({
 					type: "POST",
 					dataType: "json",
@@ -159,15 +183,24 @@
 						alert('运行超时，请重试！');
 					},
 	                success: function (data, textStatus) {
-	                	var status = parseInt(data);
-	                	if(status > 0) {
-	                		alert('购买成功！');
-	                		changePage("");
+	                	var res = eval("(" + data + ")");
+	                	if(res.status == 'success') {
+	                		Messager.alert('购买成功！');
+	                		$("#pagination").common("refreshPage");
 	                		getCartCount();
 	                	} else {
-	                		alert('购买失败！')
-	                	}
-	                	
+	                		var invalidGoodsList = res.invalidGoodsList;
+	                		for(var i = 0 ; i < invalidGoodsList.length; i++) {
+	                			var goodsId = invalidGoodsList[i].goodsId;
+	                			var msg = invalidGoodsList[i].msg;
+	                			var invalidGoods = $(".cart-header").find("[value=" + goodsId + "]").parent().find(".ring-in").find("img");
+	                			$(invalidGoods).attr("data-toggle","popover");
+	                			$(invalidGoods).attr("data-placement","right");
+	                			$(invalidGoods).attr("data-content",msg);
+	                			$(invalidGoods).popover("toggle");
+	                		}
+	                		$("pagination").common("refreshPage");
+	                	}	
 	                }
 				});	
 			});

@@ -3071,9 +3071,9 @@
                 data = $.extend(true, {}, self._getOutData(), params);
                 data.abortData = self.ajaxAborted.data || {};
                 data.abortMessage = self.ajaxAborted.message;
-                self.cancel();
                 self._setProgress(101, self.$progress, self.msgCancelled);
                 self._showUploadError(self.ajaxAborted.message, data, 'filecustomerror');
+                self.cancel();
                 return true;
             }
             return false;

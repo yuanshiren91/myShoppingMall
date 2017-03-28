@@ -18,14 +18,14 @@
 						</c:if>	
 					</div>											
 					<div class="box">
-						<c:if test="${sessionScope['roleId'] eq '1' }">
+						<c:if test="${sessionScope['roleId'] eq 1 }">
 						<select id="userrole" class="dropdown drop" onchange="self.location.href=options[selectedIndex].value">
 							<option value="" class="label">我是买家</option>
 							<option value="${pageContext.request.contextPath}/order/myOrder">我的账务</option>
 							<option value="${pageContext.request.contextPath}/cart/myCart">我的购物车</option>
 						</select>
 						</c:if>
-						<c:if test="${sessionScope['roleId'] eq '2' }">
+						<c:if test="${sessionScope['roleId'] eq 2 }">
 							<select id="userrole" class="dropdown drop" onchange="self.location.href=options[selectedIndex].value">
 								<option value="" class="label">我是卖家</option>
 								<option value="${pageContext.request.contextPath}/seller/getMyGoods">我的商品</option>
@@ -35,7 +35,6 @@
 					</div>								
 				</div>
 				<div class="col-md-6 top-header-right">
-					
 					<div class="cart box_1">
 						<a href="${pageContext.request.contextPath}/order/myOrder">账务</a>
 						<a href="${pageContext.request.contextPath}/cart/myCart">

@@ -35,8 +35,9 @@
 							<li><span>项目</span></li>
 							<li><span>商品名称</span></li>	
 							<li><span>购买时间</span>
-							<li><span>数量</span><li>	
-							<li><span>价格</span></li>
+							<li><span>购买数量</span><li>	
+							<li><span>商品单价</span>
+							<li><span>总价</span></li>
 							<div class="clearfix"> </div>
 						</ul>			
 					</div> 
@@ -109,6 +110,7 @@
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
 							 +	'<li><span class="time">' + resultList[i].orderTime + '</span></li>'
 							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'
+							 +	'<li><span class="cost">' + resultList[i].purchasedUnitPrice + '</span></li>'
  							 +	'<li><span class="cost">' + resultList[i].priceSum + '</span></li>'
 							 +  '<div class="clearfix"> </div>'
 							 +  '</ul>';

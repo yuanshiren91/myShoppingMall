@@ -57,11 +57,13 @@
 				});
 			});
 			
+			$("#inputSearch").change(function(){
+				$("#keywords").val($(this).val());
+			});
+			
 			$("#btnSearch").click(function() {
-				var keywords = $('#inputSearch').val();
 				var status = $(".top-nav li .active").attr("name");
-				$('#keywords').val(keywords);
-				changePage("");
+				$("#pagination").common("refreshPage");
 			});
 			
 		});

@@ -23,6 +23,7 @@ import com.netease.myShoppingMall.core.dao.GoodsMapper;
 import com.netease.myShoppingMall.core.dao.OrderMapper;
 import com.netease.myShoppingMall.core.domain.Goods;
 import com.netease.myShoppingMall.core.domain.GoodsImage;
+import com.netease.myShoppingMall.core.domain.Order;
 import com.netease.myShoppingMall.core.service.face.IGoodsService;
 
 @Service
@@ -49,7 +50,7 @@ public class GoodsService extends BaseService<Goods> implements IGoodsService{
 	public List<Goods> findMostPopularGoods(Map<String, Object> params) {
 		params.put("start", 0);
 		params.put("limit", params.get("itemCount"));
-		params.put("ifOrder",true);
+		params.put("ifOrderBySelledAmount",true);
 		return goodsMapper.findByPage(params);
 	}
 
@@ -71,6 +72,18 @@ public class GoodsService extends BaseService<Goods> implements IGoodsService{
 			goodsImgSrcList.add(goodsImage.getImgSrc().toString());
 		}
 		return goodsImgSrcList;
+	}
+
+	@Override
+	public Goods getGoodsInfo(Map<String, Object> params) {
+		Goods goodsInfo = goodsMapper.findOne(params);
+		//判断用户是否已购买,若已购买，显示最近一次购买时价格	
+		params.put("ifOrderByTime", true);
+		List<Order> orderItems = orderMapper.findList(params);
+		if(!orderItems.isEmpty()) {
+			goodsInfo.setUnitPrice(orderItems.get(0).getPurchasedUnitPrice());
+		}
+		return goodsInfo;
 	}
 	
 	

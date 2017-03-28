@@ -92,7 +92,7 @@ html[xmlns] .flexslider .slides {
   zoom: 1;
 }
 .flexslider .slides img {
-  height: auto;
+  height: 310px;
 }
 .flex-viewport {
   max-height: 450px;
@@ -197,7 +197,7 @@ li.clone {
 }
 .flex-control-thumbs img {
   width: 100%;
-  height: auto;
+  height: 120px;
   display: block;
   opacity: .7;
   cursor: pointer;

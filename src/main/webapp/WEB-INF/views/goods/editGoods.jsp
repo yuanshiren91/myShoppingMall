@@ -78,7 +78,7 @@
 							<div id="fileUpload" name="upload" style="display:none" class="form-group">
 								<label class="control-label" ></label> 
 								<input id=imgUpload name="goodsImage" multiple type="file" >					
-								<p class="help-block">支持jpg、jpeg、png格式，大小不超过1.0M，最多可同时上传3张图片</p>
+								<p class="help-block">支持jpg、jpeg、png格式，大小不超过1.0M，最多可同时上传3张图片,上传前请先保存商品信息</p>
 <!--  								<a id="btnUpload" name="upload"  href="javascript:void(0)" class="btn btn-primary btn-block">批量上传</a>  -->
 							</div>	
 																
@@ -239,7 +239,11 @@
 	                    if (data.result == 'success') {
 	                    	Messager.alert(data.msg).on(function(){
 	                    		$('#goodsId').val(data.goodsId);
-		                    	window.location.href = "${contextPath}/goods/showGoodsInfo?goodsId=" + data.goodsId;
+	                    		if(status == "release") {
+			                    	window.location.href = "${contextPath}/seller/editGoods?goodsId=" + data.goodsId;
+	                    		} else {
+			                    	window.location.href = "${contextPath}/goods/showGoodsInfo?goodsId=" + data.goodsId;
+	                    		}
 	                    	});	                    	
 	                    } else {
 	                    	Messager.alert(data.msg);	              	    	
@@ -276,18 +280,24 @@
 		    }).on("filepreupload", function (event, data, previewId, index) {
 		    	var extra = data.extra;
 		  		if(extra.goodsId == 0){
-		  			return {
- 		  				message: '请先保存商品信息!',
- 		  				data: {}
-		  			};
+		  			if(index == 0) {
+			  			return {
+	 		  				message: '请先保存商品信息!',
+	 		  				data: {}
+			  			};
+		  			} else {
+		  				return {
+		  					message: '',
+		  					data: {}
+		  				};
+		  			}
 		  		}
+		  		
 		    }).on("fileuploaded", function (event, data) {
 		        var res = data.response;
-		        if (res.status == 'success') {
-		        	Messager.alert("上传成功！");
-		        } else {
+		        if (res.status == 'fail') {
 		        	Messager.alert(res.msg);
-		        }
+		        } 
 		    })
 		}
 		

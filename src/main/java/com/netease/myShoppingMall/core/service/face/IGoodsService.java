@@ -20,4 +20,6 @@ public interface IGoodsService extends IBaseService<Goods>{
 	public List<File> getGoodsImage(Map<String, Object> params);	
 	
 	public List<String> getGoodsImgSrc(Map<String, Object> params);
+
+	public Goods getGoodsInfo(Map<String, Object> params);
 }
