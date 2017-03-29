@@ -1,15 +1,13 @@
 # myShoppingMall
-myShoppingMall是一个使用SpringMVC实现的简单的java web项目，实现了购物网站的基本功能，使用maven进行项目管理。
+myShoppingMall是一个简单的java web项目，基于SSM框架，实现了购物网站基本功能。
 
 -------------------
 在这个项目里主要实现了以下技术：
 * spring-webmvc
-* svnkit
-* jgit
-* javax.mail
-* jasypt
-* dom4j
-* spring scheduler
+* mybatis
+* mysql
+* bootstrap
+* jquery
 
 ##如何运行
 jdbcProperties
