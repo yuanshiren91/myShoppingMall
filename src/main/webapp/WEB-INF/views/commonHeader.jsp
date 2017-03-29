@@ -6,26 +6,26 @@
 			<div class="top-header-main">					
 				<div class="col-md-6 top-header-left">
 					<div class="box">
-						<c:if test="${empty sessionScope['username']}">
+						<c:if test="${empty sessionScope['userInfo']}">
 							<a href="${pageContext.request.contextPath}/login">请[登录]</a>
 							
 						</c:if>	
-						<c:if test="${not empty sessionScope['username']}">
+						<c:if test="${not empty sessionScope['userInfo']}">
 							<a href="${pageContext.request.contextPath}/order/myOrder">
-								欢迎您！${sessionScope['username']}
+								欢迎您！${sessionScope.userInfo.username}
 							</a>
 							<a href="${pageContext.request.contextPath}/logout">[注销]</a>				
 						</c:if>	
 					</div>											
 					<div class="box">
-						<c:if test="${sessionScope['roleId'] eq 1 }">
+						<c:if test="${sessionScope['userInfo']['roleId'] eq 1 }">
 						<select id="userrole" class="dropdown drop" onchange="self.location.href=options[selectedIndex].value">
 							<option value="" class="label">我是买家</option>
 							<option value="${pageContext.request.contextPath}/order/myOrder">我的账务</option>
 							<option value="${pageContext.request.contextPath}/cart/myCart">我的购物车</option>
 						</select>
 						</c:if>
-						<c:if test="${sessionScope['roleId'] eq 2 }">
+						<c:if test="${sessionScope['userInfo']['roleId'] eq 2 }">
 							<select id="userrole" class="dropdown drop" onchange="self.location.href=options[selectedIndex].value">
 								<option value="" class="label">我是卖家</option>
 								<option value="${pageContext.request.contextPath}/seller/getMyGoods">我的商品</option>

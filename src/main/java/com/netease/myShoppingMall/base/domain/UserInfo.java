@@ -1,19 +1,22 @@
 package com.netease.myShoppingMall.base.domain;
 
-public class User {
+public class UserInfo {
+	private Integer userId;
 	private String username;
 	private String password;
-	private String userrole;
-	public User() {
+	private Integer roleId;
+	
+	public UserInfo() {
 		
 	}
-	public User(String username, String password, String userrole) {
-		super();
-		this.username = username;
-		this.password = password;
-		this.userrole = userrole;
-	}
 	
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -25,17 +28,16 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
-	
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public String getUserrole() {
-		return userrole;
+	public Integer getRoleId() {
+		return roleId;
 	}
 
-	public void setUserrole(String userrole) {
-		this.userrole = userrole;
+	public void setUserrole(Integer roleId) {
+		this.roleId = roleId;
 	}
 	
 }
