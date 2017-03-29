@@ -73,8 +73,13 @@
 							</div>	
 							<div id="urlUpload" name="upload" style="display:block" class="form-group" >
 								<label class="control-label" for="imgSrc" ></label> 
+<<<<<<< HEAD
 								<input type="text" name="imgSrc">
 							</div>			
+=======
+								<input type="text" style="width:80%" name="imgSrc">
+							</div>	 			
+>>>>>>> refs/remotes/origin/master
 							<div id="fileUpload" name="upload" style="display:none" class="form-group">
 								<label class="control-label" ></label> 
 								<input id=imgUpload name="goodsImage" multiple type="file" >					
