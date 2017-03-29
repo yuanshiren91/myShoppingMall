@@ -213,9 +213,7 @@
 				} else {
 					$(this).attr("data-thumb","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + (index - (imgUrl == "" ? 0 : 1 )));			
 					$(this).find("img").attr("src","${contextPath}/goods/showGoodsImage/" + $('#goodsId').val() + "/single/" + (index - (imgUrl == "" ? 0 : 1 )));
-					$(this).find("img").error(function(){
-						$(this).src='${imagesPath}/noPic.jpg';
-					});
+					$(this).find("img").attr("onerror","javascript:this.src='${imagesPath}/noPic.jpg'");
 				}
 			});
 		}
@@ -240,6 +238,10 @@
 						var responseText = data.responseText;
 						if(responseText == "loginRequired") {
 							window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+						} else if(responseText == "sessionFailed") {
+							window.location.href = "${contextPath}/index";
+						} else {
+							alert('运行超时，请重试！');
 						}
 					},
 					success: function(data, textStatus) {
