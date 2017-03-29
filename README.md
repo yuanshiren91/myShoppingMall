@@ -8,6 +8,10 @@ myShoppingMall是一个简单的java web项目，基于SSM框架，实现了购�
 * mysql
 * bootstrap
 * jquery
+## 运行环境
+jdk1.7
+
+tomcat7.0
 
 ## 快速运行
 第一步：根据SQL文件配置Mysql数据库
