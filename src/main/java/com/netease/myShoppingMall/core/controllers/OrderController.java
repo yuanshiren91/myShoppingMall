@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.netease.myShoppingMall.base.controllers.CommonController;
 import com.netease.myShoppingMall.base.domain.PageEntity;
 import com.netease.myShoppingMall.base.domain.PageResult;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.core.domain.Order;
 import com.netease.myShoppingMall.core.service.face.IOrderService;
 
@@ -31,7 +32,7 @@ public class OrderController extends CommonController{
 	
 	@RequestMapping("/myOrder")
     public String myCart(HttpSession session, HttpServletRequest request, HttpServletResponse response, ModelMap model) {
-    	String username = session.getAttribute("username").toString();
+    	String username = session.getAttribute("userInfo") == null ? "" : ((UserInfo)session.getAttribute("userInfo")).getUsername();
     	if(StringUtils.isEmpty(username)) {
     		try {
 				response.sendRedirect(request.getContextPath()+"/login");
@@ -93,7 +94,7 @@ public class OrderController extends CommonController{
 	@ResponseBody
 	@RequestMapping("/getOrderSum")
 	public double getOrderSum(HttpSession session, HttpServletRequest request) {
-		Integer userId = (Integer)session.getAttribute("userId");
+		Integer userId = session.getAttribute("userInfo") == null ? 0 : ((UserInfo)session.getAttribute("userInfo")).getUserId();
 		return orderService.getOrderSum(userId);
 	}
 	

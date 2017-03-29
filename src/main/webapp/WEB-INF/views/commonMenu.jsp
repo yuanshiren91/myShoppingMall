@@ -10,12 +10,12 @@
 					<ul class="memenu skyblue"><li class="active" name="all"><a href="${contextPath}/index">主页</a></li>
 						<li class="grid" name="all"><a href="javascript:changePage('')">所有内容</a>
 						<!-- 买家菜单 -->
-						<c:if test="${sessionScope.roleId eq '1' }">
+						<c:if test="${sessionScope['userInfo']['roleId'] eq 1 }">
 							<li class="grid" name="unPurchased"><a href="javascript:changePage('')">未购买</a>
 							<li class="grid" name="purchased"><a href="javascript:changePage('')">已购买</a>
 						</c:if>
 						<!-- 卖家菜单 -->
-						<c:if test="${sessionScope.roleId eq '2' }">
+						<c:if test="${sessionScope['userInfo']['roleId'] eq 2 }">
 							<li class="grid" name="unSelled"><a href="javascript:changePage('')">未售出</a>
 							<li class="grid" name="selled"><a href="javascript:changePage('')">已售出</a>
 						</c:if>

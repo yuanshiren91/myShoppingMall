@@ -36,7 +36,7 @@ public class UserInfo {
 		return roleId;
 	}
 
-	public void setUserrole(Integer roleId) {
+	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}
 	

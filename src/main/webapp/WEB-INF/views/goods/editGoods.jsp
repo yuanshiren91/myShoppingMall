@@ -73,13 +73,8 @@
 							</div>	
 							<div id="urlUpload" name="upload" style="display:block" class="form-group" >
 								<label class="control-label" for="imgSrc" ></label> 
-<<<<<<< HEAD
 								<input type="text" name="imgSrc">
 							</div>			
-=======
-								<input type="text" style="width:80%" name="imgSrc">
-							</div>	 			
->>>>>>> refs/remotes/origin/master
 							<div id="fileUpload" name="upload" style="display:none" class="form-group">
 								<label class="control-label" ></label> 
 								<input id=imgUpload name="goodsImage" multiple type="file" >					
@@ -237,8 +232,15 @@
 					data:JSON.stringify(jsonObject),
 					contentType:"application/json; charset=utf-8",
 					error: function (data) { 
-						alert('运行超时，请重试！');
-						$('input[type="submit"]').attr("disabled",'enable');
+						var responseText = data.responseText;
+						if(responseText == "loginRequired") {
+							window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+						} else if(responseText == "sessionFailed") {
+							window.location.href = "${contextPath}/index";
+						} else {
+							alert('运行超时，请重试！');
+							$('input[type="submit"]').attr("disabled",'enable');
+						}
 					},
 	                success: function (data, textStatus) {
 	                    if (data.result == 'success') {

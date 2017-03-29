@@ -111,7 +111,7 @@
 							 + "<div class='product-main simpleCart_shelfItem'>"
 							 + "<a href='${contextPath}/goods/showGoodsInfo?goodsId=" + resultList[i].goodsId + "' class='mask'>";
 							 if(parseInt(resultList[i].selledAmount) > 0) {
-								 <c:if test="${sessionScope.roleId eq '1'}">
+								 <c:if test="${sessionScope['userInfo']['roleId'] eq 1}">
 								 	 list += "<span class='had'><b>已购买</b></span>" ;
 								 </c:if>
 							 }
@@ -123,11 +123,11 @@
 						list += "</a>"
 							 +	"<div class='product-bottom'>"
 							 +	"<h3 style='overflow:hidden'>" + resultList[i].goodsName + "</h3>"
-							 <c:if test="${sessionScope.roleId ne '2'}">
+							 <c:if test="${sessionScope['userInfo']['roleId'] ne 2}">
 							 	+	"<h4><a class='item_add' href='javascript:addToCart("+ resultList[i].goodsId + ", 1)'><i></i></a> <span class='item_price'>$ " + resultList[i].unitPrice + "</span></h4>"
 							 </c:if>
 							 if(parseInt(resultList[i].selledAmount) > 0) {
-								 <c:if test="${sessionScope.roleId eq '2'}">
+								 <c:if test="${sessionScope['userInfo']['roleId'] eq 2}">
 								 	list += "<span class='had'><b>已售出</b></span>"
 								 </c:if>
 							 }
@@ -188,11 +188,15 @@
 					data:JSON.stringify(params),
 					contentType:"application/json; charset=utf-8",
 					error: function (data) { 
-						var responseText = data.responseText;
-						if(responseText == "loginRequired") {
-							window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
-						}
-					},
+    					var responseText = data.responseText;
+    					if(responseText == "loginRequired") {
+    						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+    					} else if(responseText == "sessionFailed") {
+    						window.location.href = "${contextPath}/index";
+    					} else {
+    						alert('运行超时，请重试！');
+    					}
+    				},
 					success: function(data, textStatus) {
 						var res = eval("(" + data + ")");
 						Messager.alert(res.msg);					

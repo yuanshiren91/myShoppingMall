@@ -183,8 +183,10 @@ public class SellerService implements ISellerService{
 			while(iter.hasNext()){
 				FileUploadUtil.deleteFile(iter.next().getImgSrc());
 			} 
-			params.put("goodsImageList", goodsImageList);
-			goodsImageMapper.deletesButOne(params);
+			if(!goodsImageList.isEmpty()) {
+				params.put("goodsImageList", goodsImageList);
+				goodsImageMapper.deletesButOne(params);
+			}
 			return 1;
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import com.netease.myShoppingMall.base.dao.face.SpringJdbcInterface;
 import com.netease.myShoppingMall.base.dao.impl.SpringJdbcTemplate;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.base.service.face.ILoginService;
 
 
@@ -26,7 +27,9 @@ public class LoginService implements ILoginService{
     public SpringJdbcInterface springJdbcTemplate;
 	
 	@Override
-	public int doLogin(String username , String password, HttpSession session) {
+	public int doLogin(UserInfo loginInfo, HttpSession session) {
+		String username = loginInfo.getUsername() == null ? "" : loginInfo.getUsername().toString();
+		String password = loginInfo.getPassword() == null ? "" : loginInfo.getPassword().toString();
 		String sql = "select userId, username, password, roleId from netease_userinfo where username='" + username +"'";
 		List<Map<String, Object>> userList = springJdbcTemplate.queryForList(sql);
 		if(CollectionUtils.isEmpty(userList)) {
@@ -34,17 +37,20 @@ public class LoginService implements ILoginService{
 		} else {
 			Map<String, Object> user = userList.get(0);
 			String passwd = user.get("password").toString();
-			
 			if(!passwd.equals(password)) {
 				return 2;    //密码错误
 			} else {
 				//session中保存用户信息
-				String roleId = user.get("userId").toString();
-				int userId = Integer.valueOf(user.get("userId").toString());
+				Integer userId = (Integer)user.get("userId");
+				Integer roleId = (Integer)user.get("roleId");
+				loginInfo.setUserId(userId);
+				loginInfo.setRoleId(roleId);
 				
-				session.setAttribute("username", username);
-				session.setAttribute("userId", userId);
-				session.setAttribute("roleId", roleId);
+				session.setAttribute("userInfo", loginInfo);
+				
+//				session.setAttribute("username", username);
+//				session.setAttribute("userId", userId);
+//				session.setAttribute("roleId", roleId);
 				
 				return 0;    //验证成功				
 			}

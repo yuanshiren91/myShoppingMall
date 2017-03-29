@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.netease.myShoppingMall.base.controllers.CommonController;
 import com.netease.myShoppingMall.base.domain.PageEntity;
 import com.netease.myShoppingMall.base.domain.PageResult;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.core.domain.Goods;
 import com.netease.myShoppingMall.core.service.face.ICartService;
 import com.netease.myShoppingMall.core.service.face.IOrderService;
@@ -56,9 +57,8 @@ public class CartController extends CommonController{
 	@RequestMapping("/countCartItems")
 	public int countCartItems(@RequestParam(value = "status",required = false) String status, HttpServletRequest request, HttpServletResponse response ) {
 		Map<String, Object> params = getSessionParams(request);
-		String _userId = params.get("userId") == null ? "" : params.get("userId").toString();
-		if(!StringUtils.isEmpty(_userId)) {
-			int userId = Integer.valueOf(_userId);
+		Integer userId = params.get("userId") == null ? 0 : (Integer)params.get("userId");
+		if(userId != 0) {
 			params.put("userId", userId);
 			params.put("status", status);
 			int total = cartService.count(params);
@@ -98,7 +98,7 @@ public class CartController extends CommonController{
 	@ResponseBody
 	@RequestMapping(value = "/addToCart", method = RequestMethod.POST)
 	public String addToCart(@RequestBody Map<String, Object> params, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-		Integer userId = (Integer)session.getAttribute("userId");
+		Integer userId = session.getAttribute("userInfo") == null ? 0 : ((UserInfo)session.getAttribute("userInfo")).getUserId();
 		params.put("userId", userId);
 		return cartService.addToCart(params);
 	}
@@ -115,7 +115,7 @@ public class CartController extends CommonController{
 		Map<String, Object> res = new HashMap<String, Object>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("goodsId", goodsInfo.getGoodsId());
-		params.put("userId", (Integer)request.getSession().getAttribute("userId"));
+		params.put("userId", ((UserInfo)request.getSession().getAttribute("userInfo")).getUserId());
 		if(cartService.deleteOne(params) > 0) {
 			res.put("status", "success");
 			res.put("msg", "删除成功！");
@@ -138,7 +138,7 @@ public class CartController extends CommonController{
 	public String checkout(@RequestBody Map<String, Object> goodsInfo, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("goodsIds", goodsInfo.get("goodsIds"));
-		params.put("userId", (Integer)request.getSession().getAttribute("userId"));
+		params.put("userId", ((UserInfo)request.getSession().getAttribute("userInfo")).getUserId());
 		return cartService.checkout(params);
 	}
 	

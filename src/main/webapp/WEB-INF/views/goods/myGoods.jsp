@@ -149,8 +149,15 @@
     				dataType:"json",
     				data: JSON.stringify({goodsId:goodsId}),
     				contentType:"application/json; charset=UTF-8",
-    				error: function (data) {
-    					alert("运行超时，请重试！");
+    				error: function (data) { 
+    					var responseText = data.responseText;
+    					if(responseText == "loginRequired") {
+    						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+    					} else if(responseText == "sessionFailed") {
+    						window.location.href = "${contextPath}/index";
+    					} else {
+    						alert('运行超时，请重试！');
+    					}
     				},
     				success: function (data, textStatus) {
                         if (data.status == 'success') {
@@ -179,7 +186,14 @@
 				url:"${contextPath}/cart/checkout",
 				contentType:"application/json; charset=utf-8",
 				error: function (data) { 
-					alert('运行超时，请重试！');
+					var responseText = data.responseText;
+					if(responseText == "loginRequired") {
+						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+					} else if(responseText == "sessionFailed") {
+						window.location.href = "${contextPath}/index";
+					} else {
+						alert('运行超时，请重试！');
+					}
 				},
                 success: function (data, textStatus) {
                 	var status = parseInt(data);

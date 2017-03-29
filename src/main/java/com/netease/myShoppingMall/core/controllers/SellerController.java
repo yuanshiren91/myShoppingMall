@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.netease.myShoppingMall.base.controllers.CommonController;
 import com.netease.myShoppingMall.base.domain.PageEntity;
 import com.netease.myShoppingMall.base.domain.PageResult;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.base.util.FileUploadUtil;
 import com.netease.myShoppingMall.core.domain.Goods;
 import com.netease.myShoppingMall.core.service.face.IGoodsService;
@@ -119,7 +120,7 @@ public class SellerController extends CommonController{
 	@ResponseBody
 	@RequestMapping(value="/editGoods/{status}", method = RequestMethod.POST) 
 	public Map<String, Object> editGoods(@RequestBody Goods goodsInfo, @PathVariable("status") String status, HttpSession session, HttpServletRequest request) {
-		int sellerId = session.getAttribute("userId") == null ? 0 : Integer.valueOf(session.getAttribute("userId").toString());
+		Integer sellerId = session.getAttribute("userInfo") == null ? 0 : ((UserInfo)session.getAttribute("userInfo")).getUserId();
 		goodsInfo.setSellerId(sellerId);
 		return sellerService.releaseOrEditGoods(goodsInfo, status);
 	}
@@ -135,7 +136,7 @@ public class SellerController extends CommonController{
 	@ResponseBody
 	@RequestMapping(value = "/deleteMyGoods", method = RequestMethod.POST)
 	public Map<String, Object> deleteMyGoods(@RequestBody Goods goodsToDelete, HttpSession session, HttpServletRequest request) {
-		Integer sellerId = (Integer)session.getAttribute("userId");
+		Integer sellerId = session.getAttribute("userInfo") == null ? 0 : ((UserInfo)session.getAttribute("userInfo")).getUserId();
 		goodsToDelete.setSellerId(sellerId);
 		return sellerService.deleteMyGoods(goodsToDelete);
 	}
@@ -150,7 +151,7 @@ public class SellerController extends CommonController{
 	@ResponseBody
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	public Map<String, Object> uploadImage(@RequestParam(value = "goodsImage", required = false) MultipartFile goodsImage, @RequestParam("fileType") String fileType, @RequestParam("goodsId") Integer goodsId, HttpServletRequest request, HttpServletResponse response) throws IOException {	
-		Integer sellerId =(Integer)request.getSession().getAttribute("userId");
+		Integer sellerId = ((UserInfo)request.getSession().getAttribute("userInfo")).getUserId();
 		Map<String, Object> res = new HashMap<String, Object>();
 		response.setCharacterEncoding("utf-8");		
 		response.setContentType("text/html; charset=utf-8");

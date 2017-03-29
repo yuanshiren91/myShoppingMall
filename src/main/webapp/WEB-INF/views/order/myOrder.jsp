@@ -76,7 +76,14 @@
 				url:"${contextPath}/order/getOrderSum",
 				contentType:"application/json; charset=utf-8",
 				error: function (data) { 
-					alert('运行超时，请重试！');
+					var responseText = data.responseText;
+					if(responseText == "loginRequired") {
+						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+					} else if(responseText == "sessionFailed") {
+						window.location.href = "${contextPath}/index";
+					} else {
+						alert('运行超时，请重试！');
+					}
 				},
                 success: function (data, textStatus) {
                 	var total = data;
@@ -106,7 +113,7 @@
                 	for(var i = 0; i < resultList.length ; i ++) {
                 		list += '<ul class="order-header">'
                 			 + '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
+							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
 							 +	'<li><span class="time">' + resultList[i].orderTime + '</span></li>'
 							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'

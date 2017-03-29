@@ -12,7 +12,7 @@
 						</c:if>	
 						<c:if test="${not empty sessionScope['userInfo']}">
 							<a href="${pageContext.request.contextPath}/order/myOrder">
-								欢迎您！${sessionScope.userInfo.username}
+								欢迎您！${sessionScope['userInfo']['username']}
 							</a>
 							<a href="${pageContext.request.contextPath}/logout">[注销]</a>				
 						</c:if>	

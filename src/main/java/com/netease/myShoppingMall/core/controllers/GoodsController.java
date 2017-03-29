@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.netease.myShoppingMall.base.controllers.CommonController;
 import com.netease.myShoppingMall.base.domain.PageEntity;
 import com.netease.myShoppingMall.base.domain.PageResult;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.base.util.FileUploadUtil;
 import com.netease.myShoppingMall.core.domain.Goods;
 import com.netease.myShoppingMall.core.domain.GoodsImage;
@@ -124,8 +125,8 @@ public class GoodsController extends CommonController{
 		Map<String, Object> params = getRequestParams(request);
 		params.put("goodsId", goodsId);		
 		model.addAttribute("goodsId", goodsId);
-		if(session.getAttribute("userId") != null && "1".equals(session.getAttribute("roleId"))) {
-			params.put("userId", session.getAttribute("userId"));
+		if(session.getAttribute("userInfo") != null && ((UserInfo)session.getAttribute("userInfo")).getRoleId().equals(1)) {
+			params.put("userId", ((UserInfo)session.getAttribute("userInfo")).getUserId());
 			model.addAttribute("isPurchased", orderService.exist(params));
 		}
 		return "views/goods/goodsInfo";

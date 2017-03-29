@@ -88,10 +88,10 @@
 								<div class="clearfix"> </div>
 							</ul>
 						</div>
-						<c:if test="${sessionScope.roleId eq '2' }">
+						<c:if test="${sessionScope['userInfo']['roleId'] eq 2 }">
 							<a id="btnEdit" href="${contextPath}/seller/editGoods?goodsId=${goodsId}" class="add-cart item_add">编辑</a>	
 						</c:if>		
-						<c:if test="${sessionScope.roleId ne '2' }">							
+						<c:if test="${sessionScope['userInfo']['roleId'] ne '2' }">							
 							<a id="btnAddToCart" href="javascript:void(0)" class="add-cart item_add ">加入购物车</a>				
 						</c:if>	
 						</div>
