@@ -16,6 +16,7 @@ import org.apache.commons.lang3.time.DateUtils;
 
 import com.netease.myShoppingMall.base.domain.PageEntity;
 import com.netease.myShoppingMall.base.domain.PageResult;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 
 @SuppressWarnings("unchecked")
 public class CommonController {
@@ -33,12 +34,29 @@ public class CommonController {
     	String key;
     	while(keys.hasMoreElements()){
     		key = keys.nextElement();
-    		params.put(key, session.getAttribute(key));
+    		if(session.getAttribute(key) instanceof UserInfo){
+    			params.putAll(getUserInfo((UserInfo)session.getAttribute(key)));
+    		} else {
+    			params.put(key, session.getAttribute(key));
+    		}	
     	}
     	return params;
 	}
 	
-	
+	/**
+	 * 获取userInfo中的信息，将其封装为Map
+	 * @param userInfo
+	 * @return
+	 */
+	public Map<String, Object> getUserInfo(UserInfo userInfo) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("userId", userInfo.getUserId());
+		params.put("username", userInfo.getUsername());
+		params.put("roleId", userInfo.getRoleId());
+		params.put("password", userInfo.getPassword());
+		
+		return params;
+	}
 	/**
 	 * 获取HttpServletRequest中的参数，并将其封装成map
 	 * @param request

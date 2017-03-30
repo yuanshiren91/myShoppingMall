@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.netease.myShoppingMall.base.domain.User;
+import com.netease.myShoppingMall.base.domain.UserInfo;
 import com.netease.myShoppingMall.base.service.face.ILoginService;
 import com.netease.myShoppingMall.base.service.impl.LoginService;
 
@@ -59,12 +59,10 @@ public class LoginController {
      */  
 	@ResponseBody
     @RequestMapping(value = "/doLogin", method = RequestMethod.POST)  
-    public Map<String, Object> loginValidation(@RequestBody User loginInfo, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{ 
-		Map<String, Object> res = new HashMap<String, Object>();
-		String username = loginInfo.getUsername() == null ? "" : loginInfo.getUsername().toString();
-		String password = loginInfo.getPassword() == null ? "" : loginInfo.getPassword().toString();
+    public Map<String, Object> loginValidation(@RequestBody UserInfo loginInfo, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{ 
+		Map<String, Object> res = new HashMap<String, Object>();		
         //验证用户名密码是否合法
-    	int errorCode = loginService.doLogin(username, password, session);
+    	int errorCode = loginService.doLogin(loginInfo, session);
     	//登录成功
     	if(errorCode == 0) {   	
     		res.put("result", "success");
