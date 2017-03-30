@@ -304,9 +304,10 @@
 		error: function (data) { 
 			var responseText = data.responseText;
 			if(responseText == "loginRequired") {
-				window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+				window.location.href = getContextPath() + "/login?returnTo=" + window.location.href;
 			} else if(responseText == "sessionFailed") {
-				window.location.href = "${contextPath}/index";
+				alert("页面过期！");
+				window.location.href = getContextPath() + "/index";
 			} else {
 				alert('运行超时，请重试！');
 			}
@@ -315,10 +316,17 @@
 			var sessionStatus = XMLHttpRequest.getResponseHeader("sessionStatus");
 			if(sessionStatus == "timeout") {
 				alert("页面过期，请重新登录！")
-				window.location.href = "${contextPath}/index";
+				window.location.href = getContextPath() + "/index";
 			}
 		}
 	})
+	
+	function getContextPath() {
+	    var pathName = document.location.pathname;
+	    var index = pathName.substr(1).indexOf("/");
+	    var result = pathName.substr(0,index+1);
+	    return result;
+	}
 	
 			
 })(jQuery);
