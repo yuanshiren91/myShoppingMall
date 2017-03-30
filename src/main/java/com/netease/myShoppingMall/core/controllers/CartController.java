@@ -42,7 +42,8 @@ public class CartController extends CommonController{
 	
 	
 	@RequestMapping("/myCart")
-    public String myCart() {
+    public String myCart(HttpSession session, ModelMap model) {
+		model.addAttribute("userId", ((UserInfo)session.getAttribute("userInfo")).getUserId());
     	return "views/cart/myCart";
     }
 	

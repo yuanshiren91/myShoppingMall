@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.netease.myShoppingMall.base.domain.UserInfo;
+
 public class LoginInterceptor implements HandlerInterceptor{
 
 	@Override
@@ -29,13 +31,13 @@ public class LoginInterceptor implements HandlerInterceptor{
 			Object handler) throws Exception {
 		//获取请求的URL  
         String url = request.getRequestURI();  
-        if(url.indexOf("login.action")>=0){  
+        if(url.toLowerCase().indexOf("login")>=0){  
             return true;  
         }  
         
         //获取Session  
         HttpSession session = request.getSession();  
-        String username = (String)session.getAttribute("username");  
+        String username = (UserInfo)session.getAttribute("userInfo") == null ? "" : ((UserInfo)session.getAttribute("userInfo")).getUsername();  
           
         if(username != null){  
             return true;  

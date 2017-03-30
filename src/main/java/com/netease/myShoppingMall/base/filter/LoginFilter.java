@@ -18,10 +18,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
-
+import com.netease.myShoppingMall.base.listener.SessionListener;
 
 /**
- * 登录过滤器
+ * 登录过滤器，验证用户是否已登录
  */
 public class LoginFilter implements Filter{
 
@@ -40,12 +40,11 @@ public class LoginFilter implements Filter{
 			
 			/*
 			 * 访问的路径不为空，访问的不是登录页面，session中没有登录用户
-			 * 获得购物车数量
 			 */
 			
 			if(url != null && ! url.equals("") && (url.toLowerCase().indexOf("login") < 0 ) 
-					&& url.indexOf("countCartItems") < 0 && session.getAttribute("userId") == null) {
-				if(isAjaxRequest(request) && !checkAuthority(request)) {
+					&& url.toLowerCase().indexOf("countCartItems".toLowerCase()) < 0 && session.getAttribute("userInfo") == null) {
+				if(isAjaxRequest(request)) {
 					ServletOutputStream out = response.getOutputStream();
 					out.print("loginRequired");
 					out.flush();
@@ -55,7 +54,7 @@ public class LoginFilter implements Filter{
 					response.sendRedirect(request.getContextPath()+"/login?returnTo=" + url);   
 					return;
 				}
-			}
+			} 
 			
 			filterChain.doFilter(servletRequest, servletResponse);
 		}
@@ -78,27 +77,6 @@ public class LoginFilter implements Filter{
 		 */
 		private boolean isAjaxRequest(HttpServletRequest request) {
 			return request.getHeader("x-requested-with") != null && request.getHeader("x-requested-with").equalsIgnoreCase("XMLHttpRequest");
-		}
-		
-		/**
-		 * 权限判断
-		 * @param request
-		 * @return
-		 */
-		private boolean checkAuthority(HttpServletRequest request) {
-			HttpSession session = request.getSession(false);
-			String url = request.getRequestURI();  
-			if(session == null) {
-				return false;
-			} else {
-				Integer roleId = session.getAttribute("roleId") == null ? 0 : Integer.valueOf(session.getAttribute("roleId").toString());
-				if(url.toLowerCase().indexOf("cart") > 0 && !roleId.equals(1)) {
-					return false;
-				} else if(url.toLowerCase().indexOf("uploadImage") > 0 && !roleId.equals("2") ){
-					return true;
-				}
-			}
-			return true;
 		}
 
 }
