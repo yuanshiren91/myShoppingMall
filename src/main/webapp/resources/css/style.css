@@ -699,6 +699,9 @@ figure.effect-bubba:hover p,figure.effect-bubba:hover h2 {
     margin: 0;
     text-transform: uppercase;
 	font-family: 'BreeSerif-Regular';
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap; 
 }
 .product-bottom h4 span{
     font-size: 17px;
@@ -720,7 +723,8 @@ figure.effect-bubba:hover p,figure.effect-bubba:hover h2 {
 .product-bottom {
     text-align: center;
     margin-top: 20px;
-    padding-left: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 .product-bottom p {
 	font-size: 12px;
@@ -1655,6 +1659,10 @@ span.cost {
 span.name {
     font-size: 1.35em !important;
     margin-top: 1.45em !important;
+    width:80%;
+    overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap; 
 }
 a.check-out,a.exit {
     text-decoration: none;
@@ -2060,6 +2068,9 @@ h3.ghj {
     width: 65%;
     height: 180px;
 }
+.about-left img{
+	height:350px;
+}
 }
 @media (max-width:1680px){
 .banner,.banner1,.banner2{
@@ -2178,7 +2189,8 @@ a.mask {
 }
 .product-bottom {
     margin-top: 13px;
-    padding-left: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .product-main {
     padding: 1em 0px 1.9em 0px;
@@ -2248,13 +2260,15 @@ span.cost {
 .tabs {
     margin-top: 3em;
 }
+.about-left img{
+	height:310px;
+}
 }
 @media (max-width:768px){
 .top-header-left{
 	width:70%;
 	float:left;
 }
-@media (max-width:768px){
 .top-header-right{
 	width:30%;
 	float:right;
@@ -2341,6 +2355,9 @@ span.cost {
     float: left;
 	padding: 0 10px;
 }
+.about-left img{
+	height:260px;
+}
 .about {
     padding: 3.5em 0px 1em 0px;
 }
@@ -2369,7 +2386,8 @@ figure.effect-bubba p {
 }
 .product-bottom {
     margin-top: 9px;
-    padding-left: 0px;
+    padding-left: 7px;
+    padding-right: 7px;
 }
 .product-bottom h3 {
     font-size: 15px;
@@ -2640,7 +2658,8 @@ figure.effect-bubba p {
 }
 .product-bottom {
     margin-top: 5px;
-    padding-left: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 .product-bottom p {
     font-size: 9px;
@@ -2909,6 +2928,9 @@ a.simpleCart_empty {
 .about-left:nth-child(1){
 	margin-top:0;
 }
+.about-left img{
+	height:180px;
+}
 figure.effect-bubba figcaption::before, figure.effect-bubba figcaption::after {
     top: 25px;
     right: 25px;
@@ -3046,6 +3068,9 @@ a.simpleCart_empty {
 .about {
     padding: 2em 0px 0px 0px;
 }
+.about-left img{
+	height:125px;
+}
 figure.effect-bubba figcaption::before, figure.effect-bubba figcaption::after {
     top: 20px;
     right: 20px;
@@ -3077,7 +3102,8 @@ figure.effect-bubba p {
 }
 .product-bottom {
     margin-top: 2px;
-    padding-left: 0px;
+    padding-left: 1px;
+    padding-right: 1px;
 }
 .product-main {
     padding: 9px 0px 1.3em 0px;

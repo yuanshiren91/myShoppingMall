@@ -98,7 +98,13 @@
                 	for(var i = 0; i < resultList.length ; i ++) {
                 		list += '<ul class="order-header">'
                 			 + '<input type="hidden" name="goodsId" value=' + resultList[i].goodsId + '>'
-							 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" ><img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0" class="" alt=""></a></li>'
+                			 +  '<li class="ring-in"><a href="${contextPath}/goods/showGoodsInfo?goodsId=' + resultList[i].goodsId + '" >';
+                			 if(resultList[i].imgSrc != null && resultList[i].imgSrc !=''){
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="' + resultList[i].imgSrc + '"/>'; 
+							 } else {
+								 list += '<img onerror="javascript:this.src=\'${imagesPath}/noPic.jpg\'" alt="' + resultList[i].goodsName + '" src="${contextPath}/goods/showGoodsImage/' + resultList[i].goodsId+ '/single/0"/>';   
+							 }
+                		list += '</a></li>'	
 							 +	'<li><span class="name">' + resultList[i].goodsName + '</span></li>'
 							 +	'<li><span class="time">' + resultList[i].orderTime + '</span></li>'
 							 +  '<li><span class="amount">' + resultList[i].purchasedAmount + '</span></li>'

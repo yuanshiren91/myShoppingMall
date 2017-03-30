@@ -19,6 +19,11 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
+	<!-- session监听器 -->
+	<listener>
+		<listener-class>com.netease.myShoppingMall.base.listener.SessionListener</listener-class>
+	</listener>
+	
 	<!-- servlet配置 -->
 	<servlet>
     	<servlet-name>baseDispatcher</servlet-name>
@@ -56,7 +61,29 @@
   		<filter-name>loginFilter</filter-name>
   		<url-pattern>/seller/*</url-pattern>
   	</filter-mapping>
-  	  	
+  	
+   	<!-- session过滤器，防止session更改或过期后的操作 --> 
+<!--   	<filter> -->
+<!--   		<filter-name>SessionFilter</filter-name> -->
+<!--   		<filter-class>com.netease.myShoppingMall.base.filter.SessionFilter</filter-class> -->
+<!--   	</filter>  	 -->
+<!--   	<filter-mapping> -->
+<!--   		<filter-name>SessionFilter</filter-name> -->
+<!--   		<url-pattern>/cart/*</url-pattern> -->
+<!--   	</filter-mapping> -->
+<!--   	<filter-mapping> -->
+<!--   		<filter-name>SessionFilter</filter-name> -->
+<!--   		<url-pattern>/order/*</url-pattern> -->
+<!--   	</filter-mapping> -->
+<!--   	<filter-mapping> -->
+<!--   		<filter-name>SessionFilter</filter-name> -->
+<!--   		<url-pattern>/account/*</url-pattern> -->
+<!--   	</filter-mapping> -->
+<!--   	<filter-mapping> -->
+<!--   		<filter-name>SessionFilter</filter-name> -->
+<!--   		<url-pattern>/seller/*</url-pattern> -->
+<!--   	</filter-mapping> -->
+  	
 	<filter>
   		<filter-name>UrlFilter</filter-name>
   		<filter-class>com.netease.myShoppingMall.base.filter.UrlFilter</filter-class>

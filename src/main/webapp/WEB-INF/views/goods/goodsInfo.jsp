@@ -268,7 +268,6 @@
    						list += "</a>"
    							 +  '<div class="product-bottom">'
    							 +	'<h3>' + resultList[i].goodsName + '</h3>'
-   							 +	'<p>' + resultList[i].abstractInfo + '</p>'
    							 +	'<h4><span class=" item_price">$' + resultList[i].unitPrice + '</span></h4>'
    							 +  '</div>'
    						     +  '</div>'

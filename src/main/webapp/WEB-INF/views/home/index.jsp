@@ -118,7 +118,7 @@
 							 }	 
 						list += "</a>"
 							 +	"<div class='product-bottom'>"
-							 +	"<h3 style='overflow:hidden'>" + resultList[i].goodsName + "</h3>"
+							 +	"<h3 style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" + resultList[i].goodsName + "</h3>"
 							 <c:if test="${sessionScope['userInfo']['roleId'] ne 2}">
 							 	+	"<h4><a class='item_add' href='javascript:addToCart("+ resultList[i].goodsId + ", 1)'><i></i></a> <span class='item_price'>$ " + resultList[i].unitPrice + "</span></h4>"
 							 </c:if>

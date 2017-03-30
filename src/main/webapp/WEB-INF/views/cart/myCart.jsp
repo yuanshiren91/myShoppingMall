@@ -163,7 +163,7 @@
 					Messager.alert("购物车中无有效商品！");
 					return false;
 				}
-				params.goodsIds = goodsIds;				
+				params.goodsIds = goodsIds;	
 				$.ajax({
 					type: "POST",
 					dataType: "json",
