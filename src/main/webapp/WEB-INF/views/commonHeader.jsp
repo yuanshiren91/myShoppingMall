@@ -65,10 +65,6 @@
 			type: "GET",
 			dataType: "json",
 			url:"${pageContext.request.contextPath}/cart/countCartItems",
-			contentType:"application/json; charset=utf-8",
-			error: function (data) { 
-				alert('运行超时，请重试！');
-			},
             success: function (data, textStatus) {
             	var total = parseInt(data);
             	var totalShow = "<span>(" + total + ")</span>";

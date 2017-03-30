@@ -79,10 +79,6 @@
 				dataType: "json",
 				url:"${contextPath}/cart/getCartItems",
 				data:$.param(params),
-				contentType:"application/json; charset=utf-8",
-				error: function (data) { 
-					alert('运行超时，请重试！');
-				},
                 success: function (data, textStatus) {
                 	var resultList = data.resultList;
                 	var list = "";
@@ -132,17 +128,6 @@
     				type:"post",
     				dataType:"json",
     				data:JSON.stringify({goodsId:goodsId}),
-    				contentType:"application/json; charset=UTF-8",
-    				error: function (data) { 
-    					var responseText = data.responseText;
-    					if(responseText == "loginRequired") {
-    						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
-    					} else if(responseText == "sessionFailed") {
-    						window.location.href = "${contextPath}/index";
-    					} else {
-    						alert('运行超时，请重试！');
-    					}
-    				},
     				success: function (data, textStatus) {
                         if (data.status == 'success') {
                         	Messager.alert(data.msg);
@@ -184,17 +169,6 @@
 					dataType: "json",
 					url:"${contextPath}/cart/checkout",
 					data:JSON.stringify(params),
-					contentType:"application/json; charset=utf-8",
-					error: function (data) { 
-						var responseText = data.responseText;
-						if(responseText == "loginRequired") {
-							window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
-						} else if(responseText == "sessionFailed") {
-							window.location.href = "${contextPath}/index";
-						} else {
-							alert('运行超时，请重试！');
-						}
-					},
 	                success: function (data, textStatus) {
 	                	var res = eval("(" + data + ")");
 	                	if(res.status == 'success') {
@@ -212,7 +186,7 @@
 	                			$(invalidGoods).attr("data-content",msg);
 	                			$(invalidGoods).popover("toggle");
 	                		}
-	                		$("pagination").common("refreshPage");
+	                		//$("#pagination").common("refreshPage");
 	                	}	
 	                }
 				});	

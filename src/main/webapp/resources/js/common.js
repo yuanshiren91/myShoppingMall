@@ -299,5 +299,26 @@
 	    return o;
 	}
 	
+	$.ajaxSetup({
+		contentType:"application/json; charset=utf-8",
+		error: function (data) { 
+			var responseText = data.responseText;
+			if(responseText == "loginRequired") {
+				window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
+			} else if(responseText == "sessionFailed") {
+				window.location.href = "${contextPath}/index";
+			} else {
+				alert('运行超时，请重试！');
+			}
+		},
+		complete:function (XMLHttpRequest, textStatus) {
+			var sessionStatus = XMLHttpRequest.getResponseHeader("sessionStatus");
+			if(sessionStatus == "timeout") {
+				alert("页面过期，请重新登录！")
+				window.location.href = "${contextPath}/index";
+			}
+		}
+	})
+	
 			
 })(jQuery);

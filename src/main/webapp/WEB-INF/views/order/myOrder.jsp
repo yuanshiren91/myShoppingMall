@@ -74,17 +74,6 @@
 				type: "GET",
 				dataType: "json",
 				url:"${contextPath}/order/getOrderSum",
-				contentType:"application/json; charset=utf-8",
-				error: function (data) { 
-					var responseText = data.responseText;
-					if(responseText == "loginRequired") {
-						window.location.href = "${contextPath}/login?returnTo=" + window.location.href;
-					} else if(responseText == "sessionFailed") {
-						window.location.href = "${contextPath}/index";
-					} else {
-						alert('运行超时，请重试！');
-					}
-				},
                 success: function (data, textStatus) {
                 	var total = data;
                 	$("#orderSum").append(total);
@@ -103,10 +92,6 @@
 				dataType: "json",
 				url:"${contextPath}/order/getOrderItems",
 				data:$.param(params),
-				contentType:"application/json; charset=utf-8",
-				error: function (data) { 
-					alert('运行超时，请重试！');
-				},
                 success: function (data, textStatus) {
                 	var resultList = data.resultList;
                 	var list = "";
