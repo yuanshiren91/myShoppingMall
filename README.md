@@ -14,7 +14,7 @@ jdk1.7
 tomcat7.0
 
 ## 快速运行
-第一步：根据database文件配置Mysql数据库，或直接导入netease.sql文件
+第一步：根据database.sql文件配置Mysql数据库，或直接导入netease.sql文件
 
 第二步：根据配置好的数据库信息修改/src/main/resources目录下的jdbc.properties文件
 
